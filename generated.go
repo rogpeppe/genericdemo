@@ -9,10 +9,10 @@ import (
 func main() {
 	var gf GenericFuncs
 	for _, r := range []func(*GenericFuncs){
-		register_foo_Int,
-		register_foo_Flag,
-		register_foo_Str,
-		register_foo_generic(Types(new(AdderI))),
+		register_addPair_Int,
+		register_addPair_Flag,
+		register_addPair_Str,
+		register_addPair_generic(Types(new(AdderI))),
 		register_sum_Int,
 		register_sum_Flag,
 		register_sum_Str,
@@ -21,15 +21,15 @@ func main() {
 		r(&gf)
 	}
 	gf.Start()
-	_foo_Int := gf.Get("foo", Types(new(Int))).(func(Int, Int) Int)
-	_foo_Flag := gf.Get("foo", Types(new(Flag))).(func(Flag, Flag) Flag)
-	_foo_Str := gf.Get("foo", Types(new(Str))).(func(Str, Str) Str)
-	_foo_Adder := gf.Get("foo", Types(new(AdderI))).(func(AdderI, AdderI) AdderI)
+	_addPair_Int := gf.Get("addPair", Types(new(Int))).(func(Int, Int) Int)
+	_addPair_Flag := gf.Get("addPair", Types(new(Flag))).(func(Flag, Flag) Flag)
+	_addPair_Str := gf.Get("addPair", Types(new(Str))).(func(Str, Str) Str)
+	_addPair_Adder := gf.Get("addPair", Types(new(AdderI))).(func(AdderI, AdderI) AdderI)
 
-	fmt.Println(_foo_Int(34, 56))
-	fmt.Println(_foo_Str("hello ", "world"))
-	fmt.Println(_foo_Flag(Flag{2}, Flag{3}))
-	fmt.Println(_foo_Adder(StrAdderI{"hello "}, StrAdderI{"world"}))
+	fmt.Println(_addPair_Int(34, 56))
+	fmt.Println(_addPair_Str("hello ", "world"))
+	fmt.Println(_addPair_Flag(Flag{2}, Flag{3}))
+	fmt.Println(_addPair_Adder(StrAdderI{"hello "}, StrAdderI{"world"}))
 }
 
 // The following types are shared between all generic
@@ -39,7 +39,7 @@ func main() {
 //
 // So _p would be a single pointer, and _v16ppv8
 // might be used to represent a struct type like:
-// struct {x, y int64; foo *Bar; z struct {a, b int32}}
+// struct {x, y int64; addPair *Bar; z struct {a, b int32}}
 //
 // When doing this properly, we'd need to take alignment
 // into account too.
@@ -53,11 +53,11 @@ type _generic_pv8 struct {
 	_ [8]byte
 }
 
-func register_foo_Int(gf *GenericFuncs) {
-	var inst _fooData_v8
-	gf.Add("foo", Types(new(Int)), asType(
+func register_addPair_Int(gf *GenericFuncs) {
+	var inst _addPairData_v8
+	gf.Add("addPair", Types(new(Int)), asType(
 		func(p0, p1 _generic_v8) _generic_v8 {
-			return foo_v8(&inst, p0, p1)
+			return addPair_v8(&inst, p0, p1)
 		},
 		(func(a, b Int) Int)(nil),
 	))
@@ -66,15 +66,15 @@ func register_foo_Int(gf *GenericFuncs) {
 	})
 }
 
-func register_foo_Int_inline(gf *GenericFuncs) {
-	gf.Add("foo", Types(new(Int)), foo_Int_inline)
+func register_addPair_Int_inline(gf *GenericFuncs) {
+	gf.Add("addPair", Types(new(Int)), addPair_Int_inline)
 }
 
-func register_foo_Flag(gf *GenericFuncs) {
-	var inst _fooData_v8
-	gf.Add("foo", Types(new(Flag)), asType(
+func register_addPair_Flag(gf *GenericFuncs) {
+	var inst _addPairData_v8
+	gf.Add("addPair", Types(new(Flag)), asType(
 		func(p0, p1 _generic_v8) _generic_v8 {
-			return foo_v8(&inst, p0, p1)
+			return addPair_v8(&inst, p0, p1)
 		},
 		(func(a, b Flag) Flag)(nil),
 	))
@@ -83,11 +83,11 @@ func register_foo_Flag(gf *GenericFuncs) {
 	})
 }
 
-func register_foo_Str(gf *GenericFuncs) {
-	var inst _fooData_pv8
-	gf.Add("foo", Types(new(Str)), asType(
+func register_addPair_Str(gf *GenericFuncs) {
+	var inst _addPairData_pv8
+	gf.Add("addPair", Types(new(Str)), asType(
 		func(p0, p1 _generic_pv8) _generic_pv8 {
-			return foo_pv8(&inst, p0, p1)
+			return addPair_pv8(&inst, p0, p1)
 		},
 		(func(a, b Str) Str)(nil),
 	))
@@ -96,14 +96,14 @@ func register_foo_Str(gf *GenericFuncs) {
 	})
 }
 
-func register_foo_generic(t TypeTuple) func(gf *GenericFuncs) {
+func register_addPair_generic(t TypeTuple) func(gf *GenericFuncs) {
 	return func(gf *GenericFuncs) {
-		var inst _fooData_generic
+		var inst _addPairData_generic
 		t0 := t.At(0)
-		gf.Add("foo", t, reflect.MakeFunc(
+		gf.Add("addPair", t, reflect.MakeFunc(
 			reflect.FuncOf([]reflect.Type{t0, t0}, []reflect.Type{t0}, false),
 			func(args []reflect.Value) []reflect.Value {
-				return foo_generic(&inst, args)
+				return addPair_generic(&inst, args)
 			},
 		).Interface())
 		gf.AddCompleter(func() {
@@ -113,34 +113,34 @@ func register_foo_generic(t TypeTuple) func(gf *GenericFuncs) {
 	}
 }
 
-type _fooData_v8 struct {
+type _addPairData_v8 struct {
 	sum func([]_generic_v8) _generic_v8
 }
 
-func foo_v8(_inst *_fooData_v8, a, b _generic_v8) _generic_v8 {
+func addPair_v8(_inst *_addPairData_v8, a, b _generic_v8) _generic_v8 {
 	f := _inst.sum
 	return f([]_generic_v8{a, b})
 }
 
-func foo_Int_inline(a, b Int) Int {
+func addPair_Int_inline(a, b Int) Int {
 	return sum_Int([]Int{a, b})
 }
 
-type _fooData_pv8 struct {
+type _addPairData_pv8 struct {
 	sum func([]_generic_pv8) _generic_pv8
 }
 
-func foo_pv8(_inst *_fooData_pv8, a, b _generic_pv8) _generic_pv8 {
+func addPair_pv8(_inst *_addPairData_pv8, a, b _generic_pv8) _generic_pv8 {
 	f := _inst.sum
 	return f([]_generic_pv8{a, b})
 }
 
-type _fooData_generic struct {
+type _addPairData_generic struct {
 	sum   reflect.Value // func(T, T) T
 	slice reflect.Type
 }
 
-func foo_generic(_inst *_fooData_generic, args []reflect.Value) []reflect.Value {
+func addPair_generic(_inst *_addPairData_generic, args []reflect.Value) []reflect.Value {
 	a, b := args[0], args[1]
 	f := _inst.sum
 	_t0 := reflect.MakeSlice(_inst.slice, 2, 2)

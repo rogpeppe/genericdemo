@@ -3,9 +3,9 @@
 package main
 
 func main() {
-	fmt.Println(foo(Int)(34, 56))
-	fmt.Println(foo(Str)("a", "b"))
-	fmt.Println(foo(Flag)(Flag{2}, Flag{3})
+	fmt.Println(addPair(Int)(34, 56))
+	fmt.Println(addPair(Str)("a", "b"))
+	fmt.Println(addPair(Flag)(Flag{2}, Flag{3})
 }
 
 type Adder(type T) interface {
@@ -16,7 +16,7 @@ contract AdderC(t T) {
 	Adder(T)(t)
 }
 
-func foo(type T AdderC)(a, b T) T {
+func addPair(type T AdderC)(a, b T) T {
 	f := sum(T)
 	return f([]T{a, b})
 }
