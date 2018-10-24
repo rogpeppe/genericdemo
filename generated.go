@@ -67,21 +67,23 @@ func register_foo_Int_inline(gf *GenericFuncs) {
 	gf.Add("foo", Types(new(Int)), foo_Int_inline)
 }
 
-func register_foo_Int_generic(gf *GenericFuncs) {
-	var inst _fooData_generic
-	gf.Add("foo", Types(new(Int)), reflect.MakeFunc(
-		reflect.TypeOf((func(Int, Int) Int)(nil)),
-		func(args []reflect.Value) []reflect.Value {
-			return foo_generic(&inst, args)
-		},
-	).Interface())
-	gf.AddCompleter(func() {
-		inst.sum = reflect.ValueOf(gf.Get("sum", Types(new(Int))))
-		inst.slice = reflect.SliceOf(reflect.TypeOf(new(Int)).Elem())
-	})
+func register_foo_generic(t TypeTuple) func(gf *GenericFuncs) {
+	return func(gf *GenericFuncs) {
+		var inst _fooData_generic
+		t0 := t.At(0)
+		gf.Add("foo", t, reflect.MakeFunc(
+			reflect.FuncOf([]reflect.Type{t0, t0}, []reflect.Type{t0}, false),
+			func(args []reflect.Value) []reflect.Value {
+				return foo_generic(&inst, args)
+			},
+		).Interface())
+		gf.AddCompleter(func() {
+			inst.sum = reflect.ValueOf(gf.Get("sum", t))
+			inst.slice = reflect.SliceOf(t0)
+		})
+	}
 }
 
-// foo(Flag)
 func register_foo_Flag(gf *GenericFuncs) {
 	var inst _fooData_v8
 	gf.Add("foo", Types(new(Flag)), asType(
@@ -95,7 +97,6 @@ func register_foo_Flag(gf *GenericFuncs) {
 	})
 }
 
-// foo(Str)
 func register_foo_Str(gf *GenericFuncs) {
 	var inst _fooData_pv8
 	gf.Add("foo", Types(new(Str)), asType(
@@ -145,7 +146,6 @@ func foo_generic(_inst *_fooData_generic, args []reflect.Value) []reflect.Value 
 	return f.Call([]reflect.Value{_t0})
 }
 
-// sum(Int)
 func register_sum_Int(gf *GenericFuncs) {
 	var inst _sumData_v8
 	gf.Add("sum", Types(new(Int)), asType(
@@ -163,7 +163,6 @@ func register_sum_Int_inline(gf *GenericFuncs) {
 	gf.Add("sum", Types(new(Int)), sum_Int)
 }
 
-// sum(Flag)
 func register_sum_Flag(gf *GenericFuncs) {
 	var inst _sumData_v8
 	gf.Add("sum", Types(new(Flag)), asType(
@@ -177,7 +176,6 @@ func register_sum_Flag(gf *GenericFuncs) {
 	})
 }
 
-// sum(Str)
 func register_sum_Str(gf *GenericFuncs) {
 	var inst _sumData_pv8
 	gf.Add("sum", Types(new(Str)), asType(
@@ -191,12 +189,38 @@ func register_sum_Str(gf *GenericFuncs) {
 	})
 }
 
-type _sumData_v8 struct {
-	add func(_v8, _v8) _v8
+func register_sum_generic(t TypeTuple) func(gf *GenericFuncs) {
+	return func(gf *GenericFuncs) {
+		var inst _sumData_generic
+		t0 := t.At(0)
+		gf.Add("sum", t, reflect.MakeFunc(
+			reflect.FuncOf([]reflect.Type{reflect.SliceOf(t0)}, []reflect.Type{t0}, false),
+			func(args []reflect.Value) []reflect.Value {
+				return sum_generic(&inst, args)
+			},
+		).Interface())
+		gf.AddCompleter(func() {
+			inst.t0 = t0
+			m, ok := t0.MethodByName("Add")
+			if !ok {
+				panic(fmt.Errorf("%s has no Add method", t0))
+			}
+			if t0.Kind() == reflect.Interface {
+				inst.add = reflect.MakeFunc(
+					reflect.FuncOf([]reflect.Type{t0, t0}, []reflect.Type{t0}, false),
+					func(args []reflect.Value) []reflect.Value {
+						return args[0].Method(m.Index).Call(args[1:])
+					},
+				)
+			} else {
+				inst.add = m.Func
+			}
+		})
+	}
 }
 
-type _sumData_pv8 struct {
-	add func(_pv8, _pv8) _pv8
+type _sumData_v8 struct {
+	add func(_v8, _v8) _v8
 }
 
 func sum_v8(_inst *_sumData_v8, ts []_v8) _v8 {
@@ -205,6 +229,10 @@ func sum_v8(_inst *_sumData_v8, ts []_v8) _v8 {
 		x = _inst.add(x, t)
 	}
 	return x
+}
+
+type _sumData_pv8 struct {
+	add func(_pv8, _pv8) _pv8
 }
 
 func sum_pv8(_inst *_sumData_pv8, ts []_pv8) _pv8 {
@@ -221,4 +249,22 @@ func sum_Int(ts []Int) Int {
 		x = x.Add(t)
 	}
 	return x
+}
+
+type _sumData_generic struct {
+	t0  reflect.Type
+	add reflect.Value
+}
+
+func sum_generic(_inst *_sumData_generic, args []reflect.Value) []reflect.Value {
+	ts := args[0]
+	x := reflect.New(_inst.t0).Elem()
+	{
+		_n := ts.Len()
+		for _i := 0; _i < _n; _i++ {
+			t := ts.Index(_i)
+			x.Set(_inst.add.Call([]reflect.Value{x, t})[0])
+		}
+	}
+	return []reflect.Value{x}
 }

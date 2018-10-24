@@ -78,6 +78,11 @@ func Types(vs ...interface{}) TypeTuple {
 	}
 }
 
+// At returns the i'th element of the type tuple.
+func (ts TypeTuple) At(i int) reflect.Type {
+	return ts.t.Field(i).Type
+}
+
 func (ts TypeTuple) String() string {
 	n := ts.t.NumField()
 	var s []byte

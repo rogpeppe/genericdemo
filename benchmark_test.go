@@ -74,12 +74,12 @@ func BenchmarkReuse(b *testing.B) {
 func BenchmarkGenericImpl(b *testing.B) {
 	var gf GenericFuncs
 	for _, r := range []func(*GenericFuncs){
-		register_foo_Int_generic,
-		register_foo_Flag,
-		register_foo_Str,
-		register_sum_Int,
-		register_sum_Flag,
-		register_sum_Str,
+		register_foo_generic(Types(new(Int))),
+		register_foo_generic(Types(new(Flag))),
+		register_foo_generic(Types(new(Str))),
+		register_sum_generic(Types(new(Int))),
+		register_sum_generic(Types(new(Flag))),
+		register_sum_generic(Types(new(Str))),
 	} {
 		r(&gf)
 	}
