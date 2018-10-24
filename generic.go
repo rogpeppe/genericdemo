@@ -9,10 +9,10 @@ func main() {
 }
 
 type Adder(type T) interface {
-	Add(x) T
+	Add() T
 }
 
-type AdderC contract(t T) {
+contract AdderC(t T) {
 	Adder(T)(t)
 }
 
@@ -21,7 +21,7 @@ func foo(type T AdderC)(a, b T) T {
 	return f([]T{a, b})
 }
 
-func sum(type T Adder)(ts []T) T {
+func sum(type T AdderC)(ts []T) T {
 	var x T
 	for _, t := range ts {
 		x = x.Add(t)

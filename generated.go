@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 	"unsafe"
 )
 
 func main() {
 	var gf GenericFuncs
 	for _, r := range []func(*GenericFuncs){
-		register_foo_Int_inline,
+		register_foo_Int,
 		register_foo_Flag,
 		register_foo_Str,
-		register_sum_Int_inline,
+		register_sum_Int,
 		register_sum_Flag,
 		register_sum_Str,
 	} {
@@ -66,6 +67,20 @@ func register_foo_Int_inline(gf *GenericFuncs) {
 	gf.Add("foo", Types(new(Int)), foo_Int_inline)
 }
 
+func register_foo_Int_generic(gf *GenericFuncs) {
+	var inst _fooData_generic
+	gf.Add("foo", Types(new(Int)), reflect.MakeFunc(
+		reflect.TypeOf((func(Int, Int) Int)(nil)),
+		func(args []reflect.Value) []reflect.Value {
+			return foo_generic(&inst, args)
+		},
+	).Interface())
+	gf.AddCompleter(func() {
+		inst.sum = reflect.ValueOf(gf.Get("sum", Types(new(Int))))
+		inst.slice = reflect.SliceOf(reflect.TypeOf(new(Int)).Elem())
+	})
+}
+
 // foo(Flag)
 func register_foo_Flag(gf *GenericFuncs) {
 	var inst _fooData_v8
@@ -114,6 +129,20 @@ type _fooData_pv8 struct {
 func foo_pv8(_inst *_fooData_pv8, a, b _pv8) _pv8 {
 	f := _inst.sum
 	return f([]_pv8{a, b})
+}
+
+type _fooData_generic struct {
+	sum   reflect.Value // func(T, T) T
+	slice reflect.Type
+}
+
+func foo_generic(_inst *_fooData_generic, args []reflect.Value) []reflect.Value {
+	a, b := args[0], args[1]
+	f := _inst.sum
+	_t0 := reflect.MakeSlice(_inst.slice, 2, 2)
+	_t0.Index(0).Set(a)
+	_t0.Index(1).Set(b)
+	return f.Call([]reflect.Value{_t0})
 }
 
 // sum(Int)
