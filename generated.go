@@ -44,25 +44,19 @@ func main() {
 // When doing this properly, we'd need to take alignment
 // into account too.
 
-type _v8 struct {
+type _generic_v8 struct {
 	_ int64
 }
 
-type _pv8 struct {
+type _generic_pv8 struct {
 	_ unsafe.Pointer
 	_ [8]byte
 }
 
-type _pp struct {
-	_ unsafe.Pointer
-	_ unsafe.Pointer
-}
-
-// foo(Int)
 func register_foo_Int(gf *GenericFuncs) {
 	var inst _fooData_v8
 	gf.Add("foo", Types(new(Int)), asType(
-		func(p0, p1 _v8) _v8 {
+		func(p0, p1 _generic_v8) _generic_v8 {
 			return foo_v8(&inst, p0, p1)
 		},
 		(func(a, b Int) Int)(nil),
@@ -79,7 +73,7 @@ func register_foo_Int_inline(gf *GenericFuncs) {
 func register_foo_Flag(gf *GenericFuncs) {
 	var inst _fooData_v8
 	gf.Add("foo", Types(new(Flag)), asType(
-		func(p0, p1 _v8) _v8 {
+		func(p0, p1 _generic_v8) _generic_v8 {
 			return foo_v8(&inst, p0, p1)
 		},
 		(func(a, b Flag) Flag)(nil),
@@ -92,7 +86,7 @@ func register_foo_Flag(gf *GenericFuncs) {
 func register_foo_Str(gf *GenericFuncs) {
 	var inst _fooData_pv8
 	gf.Add("foo", Types(new(Str)), asType(
-		func(p0, p1 _pv8) _pv8 {
+		func(p0, p1 _generic_pv8) _generic_pv8 {
 			return foo_pv8(&inst, p0, p1)
 		},
 		(func(a, b Str) Str)(nil),
@@ -120,12 +114,12 @@ func register_foo_generic(t TypeTuple) func(gf *GenericFuncs) {
 }
 
 type _fooData_v8 struct {
-	sum func([]_v8) _v8
+	sum func([]_generic_v8) _generic_v8
 }
 
-func foo_v8(_inst *_fooData_v8, a, b _v8) _v8 {
+func foo_v8(_inst *_fooData_v8, a, b _generic_v8) _generic_v8 {
 	f := _inst.sum
-	return f([]_v8{a, b})
+	return f([]_generic_v8{a, b})
 }
 
 func foo_Int_inline(a, b Int) Int {
@@ -133,12 +127,12 @@ func foo_Int_inline(a, b Int) Int {
 }
 
 type _fooData_pv8 struct {
-	sum func([]_pv8) _pv8
+	sum func([]_generic_pv8) _generic_pv8
 }
 
-func foo_pv8(_inst *_fooData_pv8, a, b _pv8) _pv8 {
+func foo_pv8(_inst *_fooData_pv8, a, b _generic_pv8) _generic_pv8 {
 	f := _inst.sum
-	return f([]_pv8{a, b})
+	return f([]_generic_pv8{a, b})
 }
 
 type _fooData_generic struct {
@@ -158,7 +152,7 @@ func foo_generic(_inst *_fooData_generic, args []reflect.Value) []reflect.Value 
 func register_sum_Int(gf *GenericFuncs) {
 	var inst _sumData_v8
 	gf.Add("sum", Types(new(Int)), asType(
-		func(p0 []_v8) _v8 {
+		func(p0 []_generic_v8) _generic_v8 {
 			return sum_v8(&inst, p0)
 		},
 		(func([]Int) Int)(nil),
@@ -175,7 +169,7 @@ func register_sum_Int_inline(gf *GenericFuncs) {
 func register_sum_Flag(gf *GenericFuncs) {
 	var inst _sumData_v8
 	gf.Add("sum", Types(new(Flag)), asType(
-		func(p0 []_v8) _v8 {
+		func(p0 []_generic_v8) _generic_v8 {
 			return sum_v8(&inst, p0)
 		},
 		(func([]Flag) Flag)(nil),
@@ -188,7 +182,7 @@ func register_sum_Flag(gf *GenericFuncs) {
 func register_sum_Str(gf *GenericFuncs) {
 	var inst _sumData_pv8
 	gf.Add("sum", Types(new(Str)), asType(
-		func(p0 []_pv8) _pv8 {
+		func(p0 []_generic_pv8) _generic_pv8 {
 			return sum_pv8(&inst, p0)
 		},
 		(func([]Str) Str)(nil),
@@ -229,10 +223,10 @@ func register_sum_generic(t TypeTuple) func(gf *GenericFuncs) {
 }
 
 type _sumData_v8 struct {
-	add func(_v8, _v8) _v8
+	add func(_generic_v8, _generic_v8) _generic_v8
 }
 
-func sum_v8(_inst *_sumData_v8, ts []_v8) (x _v8) {
+func sum_v8(_inst *_sumData_v8, ts []_generic_v8) (x _generic_v8) {
 	if len(ts) == 0 {
 		return
 	}
@@ -244,10 +238,10 @@ func sum_v8(_inst *_sumData_v8, ts []_v8) (x _v8) {
 }
 
 type _sumData_pv8 struct {
-	add func(_pv8, _pv8) _pv8
+	add func(_generic_pv8, _generic_pv8) _generic_pv8
 }
 
-func sum_pv8(_inst *_sumData_pv8, ts []_pv8) (x _pv8) {
+func sum_pv8(_inst *_sumData_pv8, ts []_generic_pv8) (x _generic_pv8) {
 	if len(ts) == 0 {
 		return
 	}
