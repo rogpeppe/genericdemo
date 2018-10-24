@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"reflect"
+	"sync"
 	"unsafe"
 )
 
@@ -20,7 +21,6 @@ func main() {
 	} {
 		r(&gf)
 	}
-	gf.Start()
 	_addPair_Int := gf.Get("addPair", Types(new(Int))).(func(Int, Int) Int)
 	_addPair_Flag := gf.Get("addPair", Types(new(Flag))).(func(Flag, Flag) Flag)
 	_addPair_Str := gf.Get("addPair", Types(new(Str))).(func(Str, Str) Str)
@@ -57,13 +57,13 @@ func register_addPair_Int(gf *GenericFuncs) {
 	var inst _addPairData_v8
 	gf.Add("addPair", Types(new(Int)), asType(
 		func(p0, p1 _generic_v8) _generic_v8 {
+			inst.once.Do(func() {
+				unsafeSet(&inst.sum, gf.Get("sum", Types(new(Int))))
+			})
 			return addPair_v8(&inst, p0, p1)
 		},
 		(func(a, b Int) Int)(nil),
 	))
-	gf.AddInit(func() {
-		unsafeSet(&inst.sum, gf.Get("sum", Types(new(Int))))
-	})
 }
 
 func register_addPair_Int_inline(gf *GenericFuncs) {
@@ -74,26 +74,26 @@ func register_addPair_Flag(gf *GenericFuncs) {
 	var inst _addPairData_v8
 	gf.Add("addPair", Types(new(Flag)), asType(
 		func(p0, p1 _generic_v8) _generic_v8 {
+			inst.once.Do(func() {
+				unsafeSet(&inst.sum, gf.Get("sum", Types(new(Flag))))
+			})
 			return addPair_v8(&inst, p0, p1)
 		},
 		(func(a, b Flag) Flag)(nil),
 	))
-	gf.AddInit(func() {
-		unsafeSet(&inst.sum, gf.Get("sum", Types(new(Flag))))
-	})
 }
 
 func register_addPair_Str(gf *GenericFuncs) {
 	var inst _addPairData_pv8
 	gf.Add("addPair", Types(new(Str)), asType(
 		func(p0, p1 _generic_pv8) _generic_pv8 {
+			inst.once.Do(func() {
+				unsafeSet(&inst.sum, gf.Get("sum", Types(new(Str))))
+			})
 			return addPair_pv8(&inst, p0, p1)
 		},
 		(func(a, b Str) Str)(nil),
 	))
-	gf.AddInit(func() {
-		unsafeSet(&inst.sum, gf.Get("sum", Types(new(Str))))
-	})
 }
 
 func register_addPair_generic(t TypeTuple) func(gf *GenericFuncs) {
@@ -103,18 +103,19 @@ func register_addPair_generic(t TypeTuple) func(gf *GenericFuncs) {
 		gf.Add("addPair", t, reflect.MakeFunc(
 			reflect.FuncOf([]reflect.Type{t0, t0}, []reflect.Type{t0}, false),
 			func(args []reflect.Value) []reflect.Value {
+				inst.once.Do(func() {
+					inst.sum = reflect.ValueOf(gf.Get("sum", t))
+					inst.slice = reflect.SliceOf(t0)
+				})
 				return addPair_generic(&inst, args)
 			},
 		).Interface())
-		gf.AddInit(func() {
-			inst.sum = reflect.ValueOf(gf.Get("sum", t))
-			inst.slice = reflect.SliceOf(t0)
-		})
 	}
 }
 
 type _addPairData_v8 struct {
-	sum func([]_generic_v8) _generic_v8
+	once sync.Once
+	sum  func([]_generic_v8) _generic_v8
 }
 
 func addPair_v8(_inst *_addPairData_v8, a, b _generic_v8) _generic_v8 {
@@ -127,7 +128,8 @@ func addPair_Int_inline(a, b Int) Int {
 }
 
 type _addPairData_pv8 struct {
-	sum func([]_generic_pv8) _generic_pv8
+	once sync.Once
+	sum  func([]_generic_pv8) _generic_pv8
 }
 
 func addPair_pv8(_inst *_addPairData_pv8, a, b _generic_pv8) _generic_pv8 {
@@ -136,6 +138,7 @@ func addPair_pv8(_inst *_addPairData_pv8, a, b _generic_pv8) _generic_pv8 {
 }
 
 type _addPairData_generic struct {
+	once  sync.Once
 	sum   reflect.Value // func(T, T) T
 	slice reflect.Type
 }
@@ -151,15 +154,13 @@ func addPair_generic(_inst *_addPairData_generic, args []reflect.Value) []reflec
 
 func register_sum_Int(gf *GenericFuncs) {
 	var inst _sumData_v8
+	unsafeSet(&inst.add, Int.Add)
 	gf.Add("sum", Types(new(Int)), asType(
 		func(p0 []_generic_v8) _generic_v8 {
 			return sum_v8(&inst, p0)
 		},
 		(func([]Int) Int)(nil),
 	))
-	gf.AddInit(func() {
-		unsafeSet(&inst.add, Int.Add)
-	})
 }
 
 func register_sum_Int_inline(gf *GenericFuncs) {
@@ -168,57 +169,51 @@ func register_sum_Int_inline(gf *GenericFuncs) {
 
 func register_sum_Flag(gf *GenericFuncs) {
 	var inst _sumData_v8
+	unsafeSet(&inst.add, Flag.Add)
 	gf.Add("sum", Types(new(Flag)), asType(
 		func(p0 []_generic_v8) _generic_v8 {
 			return sum_v8(&inst, p0)
 		},
 		(func([]Flag) Flag)(nil),
 	))
-	gf.AddInit(func() {
-		unsafeSet(&inst.add, Flag.Add)
-	})
 }
 
 func register_sum_Str(gf *GenericFuncs) {
 	var inst _sumData_pv8
+	unsafeSet(&inst.add, Str.Add)
 	gf.Add("sum", Types(new(Str)), asType(
 		func(p0 []_generic_pv8) _generic_pv8 {
 			return sum_pv8(&inst, p0)
 		},
 		(func([]Str) Str)(nil),
 	))
-	gf.AddInit(func() {
-		unsafeSet(&inst.add, Str.Add)
-	})
 }
 
 func register_sum_generic(t TypeTuple) func(gf *GenericFuncs) {
 	return func(gf *GenericFuncs) {
 		var inst _sumData_generic
 		t0 := t.At(0)
+		inst.t0 = t0
+		m, ok := t0.MethodByName("Add")
+		if !ok {
+			panic(fmt.Errorf("%s has no Add method", t0))
+		}
+		if t0.Kind() == reflect.Interface {
+			inst.add = reflect.MakeFunc(
+				reflect.FuncOf([]reflect.Type{t0, t0}, []reflect.Type{t0}, false),
+				func(args []reflect.Value) []reflect.Value {
+					return args[0].Method(m.Index).Call(args[1:])
+				},
+			)
+		} else {
+			inst.add = m.Func
+		}
 		gf.Add("sum", t, reflect.MakeFunc(
 			reflect.FuncOf([]reflect.Type{reflect.SliceOf(t0)}, []reflect.Type{t0}, false),
 			func(args []reflect.Value) []reflect.Value {
 				return sum_generic(&inst, args)
 			},
 		).Interface())
-		gf.AddInit(func() {
-			inst.t0 = t0
-			m, ok := t0.MethodByName("Add")
-			if !ok {
-				panic(fmt.Errorf("%s has no Add method", t0))
-			}
-			if t0.Kind() == reflect.Interface {
-				inst.add = reflect.MakeFunc(
-					reflect.FuncOf([]reflect.Type{t0, t0}, []reflect.Type{t0}, false),
-					func(args []reflect.Value) []reflect.Value {
-						return args[0].Method(m.Index).Call(args[1:])
-					},
-				)
-			} else {
-				inst.add = m.Func
-			}
-		})
 	}
 }
 

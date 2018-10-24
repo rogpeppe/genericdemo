@@ -20,7 +20,6 @@ func BenchmarkDirect(b *testing.B) {
 	} {
 		r(&gf)
 	}
-	gf.Start()
 	_addPair_Int := gf.Get("addPair", Types(new(Int))).(func(Int, Int) Int)
 	b.ResetTimer()
 
@@ -41,7 +40,6 @@ func BenchmarkDirectInner(b *testing.B) {
 	} {
 		r(&gf)
 	}
-	gf.Start()
 	_addPair_Int := gf.Get("addPair", Types(new(Int))).(func(Int, Int) Int)
 	b.ResetTimer()
 
@@ -62,7 +60,6 @@ func BenchmarkReuse(b *testing.B) {
 	} {
 		r(&gf)
 	}
-	gf.Start()
 	_addPair_Int := gf.Get("addPair", Types(new(Int))).(func(Int, Int) Int)
 
 	b.ResetTimer()
@@ -83,7 +80,6 @@ func BenchmarkGenericImpl(b *testing.B) {
 	} {
 		r(&gf)
 	}
-	gf.Start()
 	_addPair_Int := gf.Get("addPair", Types(new(Int))).(func(Int, Int) Int)
 
 	b.ResetTimer()

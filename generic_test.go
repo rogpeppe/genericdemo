@@ -19,7 +19,6 @@ func TestSanity(t *testing.T) {
 	} {
 		r(&gf)
 	}
-	gf.Start()
 	_addPair_Int := gf.Get("addPair", Types(new(Int))).(func(Int, Int) Int)
 	_addPair_Flag := gf.Get("addPair", Types(new(Flag))).(func(Flag, Flag) Flag)
 	_addPair_Str := gf.Get("addPair", Types(new(Str))).(func(Str, Str) Str)
@@ -44,7 +43,6 @@ func TestGenericImpl(t *testing.T) {
 	} {
 		r(&gf)
 	}
-	gf.Start()
 	_addPair_Int := gf.Get("addPair", Types(new(Int))).(func(Int, Int) Int)
 	_addPair_Flag := gf.Get("addPair", Types(new(Flag))).(func(Flag, Flag) Flag)
 	_addPair_Str := gf.Get("addPair", Types(new(Str))).(func(Str, Str) Str)
