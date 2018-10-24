@@ -5,26 +5,28 @@ import (
 	"reflect"
 	"sync"
 	"unsafe"
+
+	"github.com/rogpeppe/genericdemo/generic"
 )
 
 func main() {
-	var gf GenericFuncs
-	for _, r := range []func(*GenericFuncs){
+	var gf generic.Funcs
+	for _, r := range []func(*generic.Funcs){
 		register_addPair_Int,
 		register_addPair_Flag,
 		register_addPair_Str,
-		register_addPair_generic(Types(new(AdderI))),
+		register_addPair_generic(generic.Types(new(AdderI))),
 		register_sum_Int,
 		register_sum_Flag,
 		register_sum_Str,
-		register_sum_generic(Types(new(AdderI))),
+		register_sum_generic(generic.Types(new(AdderI))),
 	} {
 		r(&gf)
 	}
-	_addPair_Int := gf.Get("addPair", Types(new(Int))).(func(Int, Int) Int)
-	_addPair_Flag := gf.Get("addPair", Types(new(Flag))).(func(Flag, Flag) Flag)
-	_addPair_Str := gf.Get("addPair", Types(new(Str))).(func(Str, Str) Str)
-	_addPair_Adder := gf.Get("addPair", Types(new(AdderI))).(func(AdderI, AdderI) AdderI)
+	_addPair_Int := gf.Get("addPair", generic.Types(new(Int))).(func(Int, Int) Int)
+	_addPair_Flag := gf.Get("addPair", generic.Types(new(Flag))).(func(Flag, Flag) Flag)
+	_addPair_Str := gf.Get("addPair", generic.Types(new(Str))).(func(Str, Str) Str)
+	_addPair_Adder := gf.Get("addPair", generic.Types(new(AdderI))).(func(AdderI, AdderI) AdderI)
 
 	fmt.Println(_addPair_Int(34, 56))
 	fmt.Println(_addPair_Str("hello ", "world"))
@@ -53,12 +55,12 @@ type _generic_pv8 struct {
 	_ [8]byte
 }
 
-func register_addPair_Int(gf *GenericFuncs) {
+func register_addPair_Int(gf *generic.Funcs) {
 	var inst _addPairData_v8
-	gf.Add("addPair", Types(new(Int)), asType(
+	gf.Add("addPair", generic.Types(new(Int)), generic.AsType(
 		func(p0, p1 _generic_v8) _generic_v8 {
 			inst.once.Do(func() {
-				unsafeSet(&inst.sum, gf.Get("sum", Types(new(Int))))
+				generic.UnsafeSet(&inst.sum, gf.Get("sum", generic.Types(new(Int))))
 			})
 			return addPair_v8(&inst, p0, p1)
 		},
@@ -66,16 +68,16 @@ func register_addPair_Int(gf *GenericFuncs) {
 	))
 }
 
-func register_addPair_Int_inline(gf *GenericFuncs) {
-	gf.Add("addPair", Types(new(Int)), addPair_Int_inline)
+func register_addPair_Int_inline(gf *generic.Funcs) {
+	gf.Add("addPair", generic.Types(new(Int)), addPair_Int_inline)
 }
 
-func register_addPair_Flag(gf *GenericFuncs) {
+func register_addPair_Flag(gf *generic.Funcs) {
 	var inst _addPairData_v8
-	gf.Add("addPair", Types(new(Flag)), asType(
+	gf.Add("addPair", generic.Types(new(Flag)), generic.AsType(
 		func(p0, p1 _generic_v8) _generic_v8 {
 			inst.once.Do(func() {
-				unsafeSet(&inst.sum, gf.Get("sum", Types(new(Flag))))
+				generic.UnsafeSet(&inst.sum, gf.Get("sum", generic.Types(new(Flag))))
 			})
 			return addPair_v8(&inst, p0, p1)
 		},
@@ -83,12 +85,12 @@ func register_addPair_Flag(gf *GenericFuncs) {
 	))
 }
 
-func register_addPair_Str(gf *GenericFuncs) {
+func register_addPair_Str(gf *generic.Funcs) {
 	var inst _addPairData_pv8
-	gf.Add("addPair", Types(new(Str)), asType(
+	gf.Add("addPair", generic.Types(new(Str)), generic.AsType(
 		func(p0, p1 _generic_pv8) _generic_pv8 {
 			inst.once.Do(func() {
-				unsafeSet(&inst.sum, gf.Get("sum", Types(new(Str))))
+				generic.UnsafeSet(&inst.sum, gf.Get("sum", generic.Types(new(Str))))
 			})
 			return addPair_pv8(&inst, p0, p1)
 		},
@@ -96,8 +98,8 @@ func register_addPair_Str(gf *GenericFuncs) {
 	))
 }
 
-func register_addPair_generic(t TypeTuple) func(gf *GenericFuncs) {
-	return func(gf *GenericFuncs) {
+func register_addPair_generic(t generic.TypeTuple) func(gf *generic.Funcs) {
+	return func(gf *generic.Funcs) {
 		var inst _addPairData_generic
 		t0 := t.At(0)
 		gf.Add("addPair", t, reflect.MakeFunc(
@@ -152,10 +154,10 @@ func addPair_generic(_inst *_addPairData_generic, args []reflect.Value) []reflec
 	return f.Call([]reflect.Value{_t0})
 }
 
-func register_sum_Int(gf *GenericFuncs) {
+func register_sum_Int(gf *generic.Funcs) {
 	var inst _sumData_v8
-	unsafeSet(&inst.add, Int.Add)
-	gf.Add("sum", Types(new(Int)), asType(
+	generic.UnsafeSet(&inst.add, Int.Add)
+	gf.Add("sum", generic.Types(new(Int)), generic.AsType(
 		func(p0 []_generic_v8) _generic_v8 {
 			return sum_v8(&inst, p0)
 		},
@@ -163,14 +165,14 @@ func register_sum_Int(gf *GenericFuncs) {
 	))
 }
 
-func register_sum_Int_inline(gf *GenericFuncs) {
-	gf.Add("sum", Types(new(Int)), sum_Int)
+func register_sum_Int_inline(gf *generic.Funcs) {
+	gf.Add("sum", generic.Types(new(Int)), sum_Int)
 }
 
-func register_sum_Flag(gf *GenericFuncs) {
+func register_sum_Flag(gf *generic.Funcs) {
 	var inst _sumData_v8
-	unsafeSet(&inst.add, Flag.Add)
-	gf.Add("sum", Types(new(Flag)), asType(
+	generic.UnsafeSet(&inst.add, Flag.Add)
+	gf.Add("sum", generic.Types(new(Flag)), generic.AsType(
 		func(p0 []_generic_v8) _generic_v8 {
 			return sum_v8(&inst, p0)
 		},
@@ -178,10 +180,10 @@ func register_sum_Flag(gf *GenericFuncs) {
 	))
 }
 
-func register_sum_Str(gf *GenericFuncs) {
+func register_sum_Str(gf *generic.Funcs) {
 	var inst _sumData_pv8
-	unsafeSet(&inst.add, Str.Add)
-	gf.Add("sum", Types(new(Str)), asType(
+	generic.UnsafeSet(&inst.add, Str.Add)
+	gf.Add("sum", generic.Types(new(Str)), generic.AsType(
 		func(p0 []_generic_pv8) _generic_pv8 {
 			return sum_pv8(&inst, p0)
 		},
@@ -189,8 +191,8 @@ func register_sum_Str(gf *GenericFuncs) {
 	))
 }
 
-func register_sum_generic(t TypeTuple) func(gf *GenericFuncs) {
-	return func(gf *GenericFuncs) {
+func register_sum_generic(t generic.TypeTuple) func(gf *generic.Funcs) {
+	return func(gf *generic.Funcs) {
 		var inst _sumData_generic
 		t0 := t.At(0)
 		inst.t0 = t0
@@ -268,7 +270,7 @@ func sum_generic(_inst *_sumData_generic, args []reflect.Value) []reflect.Value 
 	if ts.Len() == 0 {
 		return []reflect.Value{reflect.Zero(_inst.t0)}
 	}
-	x := copyVal(ts.Index(0))
+	x := _copyVal(ts.Index(0))
 	{
 		_n := ts.Len()
 		for _i := 1; _i < _n; _i++ {
@@ -277,4 +279,10 @@ func sum_generic(_inst *_sumData_generic, args []reflect.Value) []reflect.Value 
 		}
 	}
 	return []reflect.Value{x}
+}
+
+func _copyVal(v reflect.Value) reflect.Value {
+	v1 := reflect.New(v.Type()).Elem()
+	v1.Set(v)
+	return v1
 }
