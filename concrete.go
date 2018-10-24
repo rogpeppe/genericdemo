@@ -19,3 +19,15 @@ type Flag struct {
 func (f Flag) Add(g Flag) Flag {
 	return Flag{f.Mask | g.Mask}
 }
+
+type AdderI interface {
+	Add(j AdderI) AdderI
+}
+
+type StrAdderI struct {
+	Str
+}
+
+func (a StrAdderI) Add(b AdderI) AdderI {
+	return StrAdderI{a.Str.Add(b.(StrAdderI).Str)}
+}

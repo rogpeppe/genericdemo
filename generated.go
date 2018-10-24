@@ -12,9 +12,11 @@ func main() {
 		register_foo_Int,
 		register_foo_Flag,
 		register_foo_Str,
+		register_foo_generic(Types(new(AdderI))),
 		register_sum_Int,
 		register_sum_Flag,
 		register_sum_Str,
+		register_sum_generic(Types(new(AdderI))),
 	} {
 		r(&gf)
 	}
@@ -22,10 +24,12 @@ func main() {
 	_foo_Int := gf.Get("foo", Types(new(Int))).(func(Int, Int) Int)
 	_foo_Flag := gf.Get("foo", Types(new(Flag))).(func(Flag, Flag) Flag)
 	_foo_Str := gf.Get("foo", Types(new(Str))).(func(Str, Str) Str)
+	_foo_Adder := gf.Get("foo", Types(new(AdderI))).(func(AdderI, AdderI) AdderI)
 
 	fmt.Println(_foo_Int(34, 56))
 	fmt.Println(_foo_Str("hello ", "world"))
 	fmt.Println(_foo_Flag(Flag{2}, Flag{3}))
+	fmt.Println(_foo_Adder(StrAdderI{"hello "}, StrAdderI{"world"}))
 }
 
 // The following types are shared between all generic
@@ -49,6 +53,11 @@ type _pv8 struct {
 	_ [8]byte
 }
 
+type _pp struct {
+	_ unsafe.Pointer
+	_ unsafe.Pointer
+}
+
 // foo(Int)
 func register_foo_Int(gf *GenericFuncs) {
 	var inst _fooData_v8
@@ -65,23 +74,6 @@ func register_foo_Int(gf *GenericFuncs) {
 
 func register_foo_Int_inline(gf *GenericFuncs) {
 	gf.Add("foo", Types(new(Int)), foo_Int_inline)
-}
-
-func register_foo_generic(t TypeTuple) func(gf *GenericFuncs) {
-	return func(gf *GenericFuncs) {
-		var inst _fooData_generic
-		t0 := t.At(0)
-		gf.Add("foo", t, reflect.MakeFunc(
-			reflect.FuncOf([]reflect.Type{t0, t0}, []reflect.Type{t0}, false),
-			func(args []reflect.Value) []reflect.Value {
-				return foo_generic(&inst, args)
-			},
-		).Interface())
-		gf.AddCompleter(func() {
-			inst.sum = reflect.ValueOf(gf.Get("sum", t))
-			inst.slice = reflect.SliceOf(t0)
-		})
-	}
 }
 
 func register_foo_Flag(gf *GenericFuncs) {
@@ -108,6 +100,23 @@ func register_foo_Str(gf *GenericFuncs) {
 	gf.AddCompleter(func() {
 		unsafeSet(&inst.sum, gf.Get("sum", Types(new(Str))))
 	})
+}
+
+func register_foo_generic(t TypeTuple) func(gf *GenericFuncs) {
+	return func(gf *GenericFuncs) {
+		var inst _fooData_generic
+		t0 := t.At(0)
+		gf.Add("foo", t, reflect.MakeFunc(
+			reflect.FuncOf([]reflect.Type{t0, t0}, []reflect.Type{t0}, false),
+			func(args []reflect.Value) []reflect.Value {
+				return foo_generic(&inst, args)
+			},
+		).Interface())
+		gf.AddCompleter(func() {
+			inst.sum = reflect.ValueOf(gf.Get("sum", t))
+			inst.slice = reflect.SliceOf(t0)
+		})
+	}
 }
 
 type _fooData_v8 struct {
@@ -223,9 +232,12 @@ type _sumData_v8 struct {
 	add func(_v8, _v8) _v8
 }
 
-func sum_v8(_inst *_sumData_v8, ts []_v8) _v8 {
-	var x _v8
-	for _, t := range ts {
+func sum_v8(_inst *_sumData_v8, ts []_v8) (x _v8) {
+	if len(ts) == 0 {
+		return
+	}
+	x = ts[0]
+	for _, t := range ts[1:] {
 		x = _inst.add(x, t)
 	}
 	return x
@@ -235,17 +247,23 @@ type _sumData_pv8 struct {
 	add func(_pv8, _pv8) _pv8
 }
 
-func sum_pv8(_inst *_sumData_pv8, ts []_pv8) _pv8 {
-	var x _pv8
-	for _, t := range ts {
+func sum_pv8(_inst *_sumData_pv8, ts []_pv8) (x _pv8) {
+	if len(ts) == 0 {
+		return
+	}
+	x = ts[0]
+	for _, t := range ts[1:] {
 		x = _inst.add(x, t)
 	}
 	return x
 }
 
-func sum_Int(ts []Int) Int {
-	var x Int
-	for _, t := range ts {
+func sum_Int(ts []Int) (x Int) {
+	if len(ts) == 0 {
+		return
+	}
+	x = ts[0]
+	for _, t := range ts[1:] {
 		x = x.Add(t)
 	}
 	return x
@@ -258,10 +276,13 @@ type _sumData_generic struct {
 
 func sum_generic(_inst *_sumData_generic, args []reflect.Value) []reflect.Value {
 	ts := args[0]
-	x := reflect.New(_inst.t0).Elem()
+	if ts.Len() == 0 {
+		return []reflect.Value{reflect.Zero(_inst.t0)}
+	}
+	x := copyVal(ts.Index(0))
 	{
 		_n := ts.Len()
-		for _i := 0; _i < _n; _i++ {
+		for _i := 1; _i < _n; _i++ {
 			t := ts.Index(_i)
 			x.Set(_inst.add.Call([]reflect.Value{x, t})[0])
 		}

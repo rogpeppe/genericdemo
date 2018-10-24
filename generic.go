@@ -21,9 +21,12 @@ func foo(type T AdderC)(a, b T) T {
 	return f([]T{a, b})
 }
 
-func sum(type T AdderC)(ts []T) T {
-	var x T
-	for _, t := range ts {
+func sum(type T AdderC)(ts []T) (x T) {
+	if len(ts) == 0 {
+		return
+	}
+	x = ts[0]
+	for _, t := range ts[1:] {
 		x = x.Add(t)
 	}
 	return x

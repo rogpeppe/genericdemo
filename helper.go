@@ -96,3 +96,9 @@ func (ts TypeTuple) String() string {
 	s = append(s, ')')
 	return string(s)
 }
+
+func copyVal(v reflect.Value) reflect.Value {
+	v1 := reflect.New(v.Type()).Elem()
+	v1.Set(v)
+	return v1
+}
