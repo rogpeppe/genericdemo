@@ -61,7 +61,7 @@ func register_addPair_Int(gf *GenericFuncs) {
 		},
 		(func(a, b Int) Int)(nil),
 	))
-	gf.AddCompleter(func() {
+	gf.AddInit(func() {
 		unsafeSet(&inst.sum, gf.Get("sum", Types(new(Int))))
 	})
 }
@@ -78,7 +78,7 @@ func register_addPair_Flag(gf *GenericFuncs) {
 		},
 		(func(a, b Flag) Flag)(nil),
 	))
-	gf.AddCompleter(func() {
+	gf.AddInit(func() {
 		unsafeSet(&inst.sum, gf.Get("sum", Types(new(Flag))))
 	})
 }
@@ -91,7 +91,7 @@ func register_addPair_Str(gf *GenericFuncs) {
 		},
 		(func(a, b Str) Str)(nil),
 	))
-	gf.AddCompleter(func() {
+	gf.AddInit(func() {
 		unsafeSet(&inst.sum, gf.Get("sum", Types(new(Str))))
 	})
 }
@@ -106,7 +106,7 @@ func register_addPair_generic(t TypeTuple) func(gf *GenericFuncs) {
 				return addPair_generic(&inst, args)
 			},
 		).Interface())
-		gf.AddCompleter(func() {
+		gf.AddInit(func() {
 			inst.sum = reflect.ValueOf(gf.Get("sum", t))
 			inst.slice = reflect.SliceOf(t0)
 		})
@@ -157,7 +157,7 @@ func register_sum_Int(gf *GenericFuncs) {
 		},
 		(func([]Int) Int)(nil),
 	))
-	gf.AddCompleter(func() {
+	gf.AddInit(func() {
 		unsafeSet(&inst.add, Int.Add)
 	})
 }
@@ -174,7 +174,7 @@ func register_sum_Flag(gf *GenericFuncs) {
 		},
 		(func([]Flag) Flag)(nil),
 	))
-	gf.AddCompleter(func() {
+	gf.AddInit(func() {
 		unsafeSet(&inst.add, Flag.Add)
 	})
 }
@@ -187,7 +187,7 @@ func register_sum_Str(gf *GenericFuncs) {
 		},
 		(func([]Str) Str)(nil),
 	))
-	gf.AddCompleter(func() {
+	gf.AddInit(func() {
 		unsafeSet(&inst.add, Str.Add)
 	})
 }
@@ -202,7 +202,7 @@ func register_sum_generic(t TypeTuple) func(gf *GenericFuncs) {
 				return sum_generic(&inst, args)
 			},
 		).Interface())
-		gf.AddCompleter(func() {
+		gf.AddInit(func() {
 			inst.t0 = t0
 			m, ok := t0.MethodByName("Add")
 			if !ok {

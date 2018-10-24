@@ -6,8 +6,8 @@ import (
 )
 
 type GenericFuncs struct {
-	funcs      map[string]map[TypeTuple]interface{}
-	completers []func()
+	funcs map[string]map[TypeTuple]interface{}
+	inits []func()
 }
 
 func (gf *GenericFuncs) Add(name string, types TypeTuple, inst interface{}) {
@@ -25,20 +25,17 @@ func (gf *GenericFuncs) Add(name string, types TypeTuple, inst interface{}) {
 	f[types] = inst
 }
 
-// AddCompleter registers a function to populate
-// the generic tables after the first initialization
-// has taken place. The function may assume
-// that entry points for a generic function have been
-// populated.
-func (gf *GenericFuncs) AddCompleter(f func()) {
-	gf.completers = append(gf.completers, f)
+// AddInit registers a function to populate the generic tables after the
+// first initialization has taken place. The function may assume that
+// entry points for a generic function have been populated.
+func (gf *GenericFuncs) AddInit(f func()) {
+	gf.inits = append(gf.inits, f)
 }
 
-// Start calls all the AddCompleter functions.
-// After this has been called, the functions
-// are ready to use.
+// Start calls all the AddInit functions. After this has been called,
+// the functions are ready to use.
 func (gf *GenericFuncs) Start() {
-	for _, f := range gf.completers {
+	for _, f := range gf.inits {
 		f()
 	}
 }
