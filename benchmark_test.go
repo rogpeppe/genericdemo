@@ -8,86 +8,86 @@ import (
 
 func BenchmarkInline(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		addPair_Int_inline(34, 56)
+		addPair__0_inline(34, 56)
 	}
 }
 
 func BenchmarkDirect(b *testing.B) {
 	var gf generic.Funcs
 	for _, r := range []func(*generic.Funcs){
-		register_addPair_Int_inline,
-		register_addPair_Flag,
-		register_addPair_Str,
-		register_sum_Int_inline,
-		register_sum_Flag,
-		register_sum_Str,
+		_register_addPair__0_inline,
+		_register_addPair__1,
+		_register_addPair__2,
+		_register_sum__0_inline,
+		_register_sum__1,
+		_register_sum__2,
 	} {
 		r(&gf)
 	}
-	_addPair_Int := gf.Get("addPair", generic.Types(new(Int))).(func(Int, Int) Int)
+	_addPair__0 := gf.Get("addPair", generic.Types(new(Int))).(func(Int, Int) Int)
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_addPair_Int(34, 56)
+		_addPair__0(34, 56)
 	}
 }
 
 func BenchmarkDirectInner(b *testing.B) {
 	var gf generic.Funcs
 	for _, r := range []func(*generic.Funcs){
-		register_addPair_Int,
-		register_addPair_Flag,
-		register_addPair_Str,
-		register_sum_Int_inline,
-		register_sum_Flag,
-		register_sum_Str,
+		_register_addPair__0,
+		_register_addPair__1,
+		_register_addPair__2,
+		_register_sum__0_inline,
+		_register_sum__1,
+		_register_sum__2,
 	} {
 		r(&gf)
 	}
-	_addPair_Int := gf.Get("addPair", generic.Types(new(Int))).(func(Int, Int) Int)
+	_addPair__0 := gf.Get("addPair", generic.Types(new(Int))).(func(Int, Int) Int)
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_addPair_Int(34, 56)
+		_addPair__0(34, 56)
 	}
 }
 
 func BenchmarkReuse(b *testing.B) {
 	var gf generic.Funcs
 	for _, r := range []func(*generic.Funcs){
-		register_addPair_Int,
-		register_addPair_Flag,
-		register_addPair_Str,
-		register_sum_Int,
-		register_sum_Flag,
-		register_sum_Str,
+		_register_addPair__0,
+		_register_addPair__1,
+		_register_addPair__2,
+		_register_sum__0,
+		_register_sum__1,
+		_register_sum__2,
 	} {
 		r(&gf)
 	}
-	_addPair_Int := gf.Get("addPair", generic.Types(new(Int))).(func(Int, Int) Int)
+	_addPair__0 := gf.Get("addPair", generic.Types(new(Int))).(func(Int, Int) Int)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_addPair_Int(34, 56)
+		_addPair__0(34, 56)
 	}
 }
 
 func BenchmarkGenericImpl(b *testing.B) {
 	var gf generic.Funcs
 	for _, r := range []func(*generic.Funcs){
-		register_addPair_generic(generic.Types(new(Int))),
-		register_addPair_generic(generic.Types(new(Flag))),
-		register_addPair_generic(generic.Types(new(Str))),
-		register_sum_generic(generic.Types(new(Int))),
-		register_sum_generic(generic.Types(new(Flag))),
-		register_sum_generic(generic.Types(new(Str))),
+		_register_addPair__generic(generic.Types(new(Int))),
+		_register_addPair__generic(generic.Types(new(Flag))),
+		_register_addPair__generic(generic.Types(new(Str))),
+		_register_sum__generic(generic.Types(new(Int))),
+		_register_sum__generic(generic.Types(new(Flag))),
+		_register_sum__generic(generic.Types(new(Str))),
 	} {
 		r(&gf)
 	}
-	_addPair_Int := gf.Get("addPair", generic.Types(new(Int))).(func(Int, Int) Int)
+	_addPair__0 := gf.Get("addPair", generic.Types(new(Int))).(func(Int, Int) Int)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_addPair_Int(34, 56)
+		_addPair__0(34, 56)
 	}
 }
