@@ -44,7 +44,7 @@ func ShortestPath(type Node, Edge Graph)(from, to Node) []Edge {
 		}
 		for _, e := range nearest.n.Edges() {
 			edgeFrom, edgeTo := e.Nodes()
-			if from != nearest.n {
+			if edgeFrom != nearest.n {
 				continue
 			}
 			dist := nearest.dist + 1		// Could use e.Length() instead of 1.

@@ -31,6 +31,10 @@ func (ts TypeTuple) At(i int) reflect.Type {
 	return ts.t.Field(i).Type
 }
 
+func (ts TypeTuple) Len() int {
+	return ts.t.NumField()
+}
+
 func (ts TypeTuple) String() string {
 	n := ts.t.NumField()
 	var s []byte

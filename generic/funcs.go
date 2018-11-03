@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+type Type struct{}
+
 type Funcs struct {
 	funcs map[string]map[TypeTuple]interface{}
 }

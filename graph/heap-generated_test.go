@@ -131,3 +131,74 @@ func TestFix(t *testing.T) {
 		verifyHeap(t, h, 0)
 	}
 }
+
+func verifyPtrIntHeap(t *testing.T, h *Heap__4, i int) {
+	t.Helper()
+	n := len(h.Items)
+	j1 := 2*i + 1
+	j2 := 2*i + 2
+	if j1 < n {
+		if *h.Items[j1] < *h.Items[i] {
+			t.Errorf("heap invariant invalidated [%d] = %d > [%d] = %d", i, *h.Items[i], j1, *h.Items[j1])
+			return
+		}
+		verifyPtrIntHeap(t, h, j1)
+	}
+	if j2 < n {
+		if *h.Items[j2] < *h.Items[i] {
+			t.Errorf("heap invariant invalidated [%d] = %d > [%d] = %d", i, *h.Items[i], j1, *h.Items[j2])
+			return
+		}
+		verifyPtrIntHeap(t, h, j2)
+	}
+}
+
+func TestPtr(t *testing.T) {
+	var items []*int
+	for i := 20; i > 10; i-- {
+		items = append(items, newInt(i))
+	}
+	h := NewHeap__4(items, func(a, b *int) bool {
+		return *a < *b
+	}, nil)
+	verifyPtrIntHeap(t, h, 0)
+
+	for i := 10; i > 0; i-- {
+		h.Push(newInt(i))
+		verifyPtrIntHeap(t, h, 0)
+	}
+
+	for i := 1; len(h.Items) > 0; i++ {
+		x := h.Pop()
+		if i < 20 {
+			h.Push(newInt(20 + i))
+		}
+		verifyPtrIntHeap(t, h, 0)
+		if *x != i {
+			t.Errorf("%d.th pop got %d; want %d", i, x, i)
+		}
+	}
+}
+
+func TestSetIndex(t *testing.T) {
+	var items []*indexedInt
+	for i := 20; i > 10; i-- {
+		items = append(items, &indexedInt{
+			x: i,
+		})
+	}
+	h := NewHeap__5(items, func(a, b *indexedInt) bool {
+		return a.x < b.x
+	}, func(x **indexedInt, i int) {
+		(*x).i = i
+	})
+	for i, item := range h.Items {
+		if item.i != i {
+			t.Errorf("item has wrong index; got %#v want %d", item, i)
+		}
+	}
+}
+
+func newInt(i int) *int {
+	return &i
+}

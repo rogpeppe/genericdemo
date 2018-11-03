@@ -14,6 +14,10 @@ func AsType(x, t interface{}) interface{} {
 // UnsafeSet sets the value pointed to by p to x,
 // ignoring type considerations.
 func UnsafeSet(p interface{}, x interface{}) {
+	//	t1, t2 := reflect.TypeOf(p).Elem(), reflect.TypeOf(x)
+	//	if ok, err := equivalent(t1, t2); !ok {
+	//		panic(fmt.Errorf("%s not equivalent to %s (%s)", t1, t2, err))
+	//	}
 	pv := reflect.ValueOf(p).Elem()
 	pv.Set(valueAsType(reflect.ValueOf(x), pv.Type()))
 }

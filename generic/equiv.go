@@ -11,35 +11,45 @@ func isGenericType(t reflect.Type) bool {
 	return strings.HasPrefix(t.Name(), "_generic_")
 }
 
+/*
+TODO
+is rt-generic t2 equivalent to instantated t1 with respect to generic type gt?
+
+if gt is a concrete type, t1 must be identical to t2
+if gt is a type parameter, t2 must be equivalent type to t2.
+if gt is a parameterized type, look up generic type
+and substitute its type parameters for the actual type arguments.
+*/
+
 // equivalent reports whether the instantiated type t1 is
 // runtime-representation-equivalent to t2. t1 must not contain any
 // _generic types.
-func equivalent(t1, t2 reflect.Type) bool {
+func equivalent(t1, t2 reflect.Type) (bool, error) {
 	// TODO check for cycles.
 
 	if isGenericType(t1) {
-		panic("instantiated type holding generic type")
+		return false, fmt.Errorf("instantiated type holding generic type")
 	}
 	if isGenericType(t2) {
-		return typeMapOf(t1).equal(typeMapOf(t2))
+		return typeMapOf(t1).equal(typeMapOf(t2)), nil
 	}
 	if t1.Kind() != t2.Kind() {
-		return false
+		return false, nil
 	}
 	if t1.NumMethod() != t2.NumMethod() {
-		return false
+		return false, nil
 	}
 	for i := 0; i < t1.NumMethod(); i++ {
 		m1, m2 := t1.Method(i), t2.Method(i)
 		if m1.Name != m2.Name || m1.PkgPath != m2.PkgPath {
-			return false
+			return false, nil
 		}
 		// Note: except for interface types, which don't include the
 		// receiver in their Type, we want to skip the receiver
 		// when comparing the methods because otherwise
 		// we'll get into an infinite loop.
-		if !equivalentFunc(m1.Type, m2.Type, t1.Kind() != reflect.Interface) {
-			return false
+		if ok, err := equivalentFunc(m1.Type, m2.Type, t1.Kind() != reflect.Interface); !ok || err != nil {
+			return false, err
 		}
 	}
 	switch t1.Kind() {
@@ -48,57 +58,67 @@ func equivalent(t1, t2 reflect.Type) bool {
 		reflect.Chan:
 		return equivalent(t1.Elem(), t2.Elem())
 	case reflect.Map:
-		return equivalent(t1.Key(), t2.Key()) &&
-			equivalent(t1.Elem(), t2.Elem())
+		ok1, err1 := equivalent(t1.Key(), t2.Key())
+		ok2, err2 := equivalent(t1.Key(), t2.Key())
+		if err1 != nil {
+			return false, err1
+		}
+		if err2 != nil {
+			return false, err2
+		}
+		return ok1 && ok2, nil
 	case reflect.Array:
-		return t1.Len() == t2.Len() && equivalent(t1.Elem(), t2.Elem())
+		if t1.Len() != t2.Len() {
+			return false, nil
+		}
+		return equivalent(t1.Elem(), t2.Elem())
 	case reflect.Struct:
 		if t1.NumField() != t2.NumField() {
-			return false
+			return false, nil
 		}
 		for i := 0; i < t1.NumField(); i++ {
 			f1, f2 := t1.Field(i), t2.Field(i)
 			ft1, ft2 := f1.Type, f2.Type
 			f1.Type, f2.Type = nil, nil
 			if !reflect.DeepEqual(f1, f2) {
-				return false
+				return false, nil
 			}
-			if !equivalent(ft1, ft2) {
-				return false
+			if ok, err := equivalent(ft1, ft2); !ok || err != nil {
+				return false, err
 			}
 		}
-		return true
+		return true, nil
 	case reflect.Func:
 		return equivalentFunc(t1, t2, false)
 	case reflect.Interface:
 		// We've already checked the interface methods above.
-		return true
+		return true, nil
 	default:
-		return t1 == t2
+		return t1 == t2, nil
 	}
 }
 
-func equivalentFunc(t1, t2 reflect.Type, skip1 bool) bool {
+func equivalentFunc(t1, t2 reflect.Type, skip1 bool) (bool, error) {
 	if t1.NumIn() != t2.NumIn() ||
 		t1.NumOut() != t2.NumOut() ||
 		t1.IsVariadic() != t2.IsVariadic() {
-		return false
+		return false, nil
 	}
 	skip := 0
 	if skip1 {
 		skip = 1
 	}
 	for i := skip; i < t1.NumIn(); i++ {
-		if !equivalent(t1.In(i), t2.In(i)) {
-			return false
+		if ok, err := equivalent(t1.In(i), t2.In(i)); !ok || err != nil {
+			return false, err
 		}
 	}
 	for i := 0; i < t1.NumOut(); i++ {
-		if !equivalent(t1.Out(i), t2.Out(i)) {
-			return false
+		if ok, err := equivalent(t1.In(i), t2.In(i)); !ok || err != nil {
+			return false, err
 		}
 	}
-	return true
+	return true, nil
 }
 
 // equivType returns a type that's equivalent to t
