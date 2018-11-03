@@ -1,31 +1,29 @@
 package graph
 
-import (
-	"unsafe"
-)
+import "github.com/rogpeppe/genericdemo/generic"
 
 var _inst_NewHeap__4 = _inst_NewHeap__p{
-	_method_Heap__down: (func(*Heap__p, int, int) bool)(unsafe.Pointer((*Heap__4).down)),
+	_method_Heap__down: generic.AsType((*Heap__4).down, (func(*Heap__p, int, int) bool)(nil)).(func(*Heap__p, int, int) bool),
 }
 
 func NewHeap__4(items []*int, less func(*int, *int) bool, setIndex func(**int, int)) *Heap__4 {
-	return (func(_inst *_inst_NewHeap__p, items []*int, less func(*int, *int) bool, setIndex func(**int, int)) *Heap__4)(unsafe.Pointer(NewHeap__p))(&_inst_NewHeap__4, items, less, setIndex)
+	return generic.AsType(NewHeap__p, (func(_inst *_inst_NewHeap__p, items []*int, less func(*int, *int) bool, setIndex func(**int, int)) *Heap__4)(nil)).(func(_inst *_inst_NewHeap__p, items []*int, less func(*int, *int) bool, setIndex func(**int, int)) *Heap__4)(&_inst_NewHeap__4, items, less, setIndex)
 }
 
 var _inst_NewHeap__5 = _inst_NewHeap__p{
-	_method_Heap__down: (func(*Heap__p, int, int) bool)(unsafe.Pointer((*Heap__5).down)),
+	_method_Heap__down: generic.AsType((*Heap__5).down, (func(*Heap__p, int, int) bool)(nil)).(func(*Heap__p, int, int) bool),
 }
 
 func NewHeap__5(items []*indexedInt, less func(*indexedInt, *indexedInt) bool, setIndex func(**indexedInt, int)) *Heap__5 {
-	return (func(_inst *_inst_NewHeap__p, items []*indexedInt, less func(*indexedInt, *indexedInt) bool, setIndex func(**indexedInt, int)) *Heap__5)(unsafe.Pointer(NewHeap__p))(&_inst_NewHeap__5, items, less, setIndex)
+	return generic.AsType(NewHeap__p, (func(_inst *_inst_NewHeap__p, items []*indexedInt, less func(*indexedInt, *indexedInt) bool, setIndex func(**indexedInt, int)) *Heap__5)(nil)).(func(_inst *_inst_NewHeap__p, items []*indexedInt, less func(*indexedInt, *indexedInt) bool, setIndex func(**indexedInt, int)) *Heap__5)(&_inst_NewHeap__5, items, less, setIndex)
 }
 
 var _inst_NewHeap__11 = _inst_NewHeap__p{
-	_method_Heap__down: (func(*Heap__p, int, int) bool)(unsafe.Pointer((*Heap__11).down)),
+	_method_Heap__down: generic.AsType((*Heap__11).down, (func(*Heap__p, int, int) bool)(nil)).(func(*Heap__p, int, int) bool),
 }
 
 func NewHeap__11(items []*item__10, less func(*item__10, *item__10) bool, setIndex func(**item__10, int)) *Heap__11 {
-	return (func(_inst *_inst_NewHeap__p, items []*item__10, less func(*item__10, *item__10) bool, setIndex func(**item__10, int)) *Heap__11)(unsafe.Pointer(NewHeap__p))(&_inst_NewHeap__11, items, less, setIndex)
+	return generic.AsType(NewHeap__p, (func(_inst *_inst_NewHeap__p, items []*item__10, less func(*item__10, *item__10) bool, setIndex func(**item__10, int)) *Heap__11)(nil)).(func(_inst *_inst_NewHeap__p, items []*item__10, less func(*item__10, *item__10) bool, setIndex func(**item__10, int)) *Heap__11)(&_inst_NewHeap__11, items, less, setIndex)
 }
 
 type item__p_p struct {
@@ -73,23 +71,23 @@ type Heap__4 struct {
 }
 
 func (h *Heap__4) Push(x *int) {
-	(func(*_inst_Heap__p, *Heap__4, *int))(unsafe.Pointer(Heap__p_Push))(&_inst_Heap__4, h, x)
+	generic.AsType(Heap__p_Push, (func(*_inst_Heap__p, *Heap__4, *int))(nil)).(func(*_inst_Heap__p, *Heap__4, *int))(&_inst_Heap__4, h, x)
 }
 
 func (h *Heap__4) Pop() *int {
-	return (func(*_inst_Heap__p, *Heap__4) *int)(unsafe.Pointer(Heap__p_Pop))(&_inst_Heap__4, h)
+	return generic.AsType(Heap__p_Pop, (func(*_inst_Heap__p, *Heap__4) *int)(nil)).(func(*_inst_Heap__p, *Heap__4) *int)(&_inst_Heap__4, h)
 }
 
 func (h *Heap__4) Fix(i int) {
-	(func(*_inst_Heap__p, *Heap__4, int))(unsafe.Pointer(Heap__p_Fix))(&_inst_Heap__4, h, i)
+	generic.AsType(Heap__p_Fix, (func(*_inst_Heap__p, *Heap__4, int))(nil)).(func(*_inst_Heap__p, *Heap__4, int))(&_inst_Heap__4, h, i)
 }
 
 func (h *Heap__4) Remove(i int) int {
-	return (func(*_inst_Heap__p, *Heap__4, int) int)(unsafe.Pointer(Heap__p_Remove))(&_inst_Heap__4, h, i)
+	return generic.AsType(Heap__p_Remove, (func(*_inst_Heap__p, *Heap__4, int) int)(nil)).(func(*_inst_Heap__p, *Heap__4, int) int)(&_inst_Heap__4, h, i)
 }
 
 func (h *Heap__4) down(i0, n int) bool {
-	return (func(_inst *_inst_Heap__p, h *Heap__4, i0, n int) bool)(unsafe.Pointer(Heap__p_down))(&_inst_Heap__4, h, i0, n)
+	return generic.AsType(Heap__p_down, (func(_inst *_inst_Heap__p, h *Heap__4, i0, n int) bool)(nil)).(func(_inst *_inst_Heap__p, h *Heap__4, i0, n int) bool)(&_inst_Heap__4, h, i0, n)
 }
 
 var _inst_Heap__5 = _inst_Heap__p{}
@@ -101,23 +99,23 @@ type Heap__5 struct {
 }
 
 func (h *Heap__5) Push(x *indexedInt) {
-	(func(*_inst_Heap__p, *Heap__5, *indexedInt))(unsafe.Pointer(Heap__p_Push))(&_inst_Heap__5, h, x)
+	generic.AsType(Heap__p_Push, (func(*_inst_Heap__p, *Heap__5, *indexedInt))(nil)).(func(*_inst_Heap__p, *Heap__5, *indexedInt))(&_inst_Heap__5, h, x)
 }
 
 func (h *Heap__5) Pop() *indexedInt {
-	return (func(*_inst_Heap__p, *Heap__5) *indexedInt)(unsafe.Pointer(Heap__p_Pop))(&_inst_Heap__5, h)
+	return generic.AsType(Heap__p_Pop, (func(*_inst_Heap__p, *Heap__5) *indexedInt)(nil)).(func(*_inst_Heap__p, *Heap__5) *indexedInt)(&_inst_Heap__5, h)
 }
 
 func (h *Heap__5) Fix(i int) {
-	(func(*_inst_Heap__p, *Heap__5, int))(unsafe.Pointer(Heap__p_Fix))(&_inst_Heap__5, h, i)
+	generic.AsType(Heap__p_Fix, (func(*_inst_Heap__p, *Heap__5, int))(nil)).(func(*_inst_Heap__p, *Heap__5, int))(&_inst_Heap__5, h, i)
 }
 
 func (h *Heap__5) Remove(i int) int {
-	return (func(*_inst_Heap__p, *Heap__5, int) int)(unsafe.Pointer(Heap__p_Remove))(&_inst_Heap__5, h, i)
+	return generic.AsType(Heap__p_Remove, (func(*_inst_Heap__p, *Heap__5, int) int)(nil)).(func(*_inst_Heap__p, *Heap__5, int) int)(&_inst_Heap__5, h, i)
 }
 
 func (h *Heap__5) down(i0, n int) bool {
-	return (func(_inst *_inst_Heap__p, h *Heap__5, i0, n int) bool)(unsafe.Pointer(Heap__p_down))(&_inst_Heap__5, h, i0, n)
+	return generic.AsType(Heap__p_down, (func(_inst *_inst_Heap__p, h *Heap__5, i0, n int) bool)(nil)).(func(_inst *_inst_Heap__p, h *Heap__5, i0, n int) bool)(&_inst_Heap__5, h, i0, n)
 }
 
 var _inst_Heap__11 = _inst_Heap__p{}
@@ -129,23 +127,23 @@ type Heap__11 struct {
 }
 
 func (h *Heap__11) Push(x *item__10) {
-	(func(*_inst_Heap__p, *Heap__11, *item__10))(unsafe.Pointer(Heap__p_Push))(&_inst_Heap__11, h, x)
+	generic.AsType(Heap__p_Push, (func(*_inst_Heap__p, *Heap__11, *item__10))(nil)).(func(*_inst_Heap__p, *Heap__11, *item__10))(&_inst_Heap__11, h, x)
 }
 
 func (h *Heap__11) Pop() *item__10 {
-	return (func(*_inst_Heap__p, *Heap__11) *item__10)(unsafe.Pointer(Heap__p_Pop))(&_inst_Heap__11, h)
+	return generic.AsType(Heap__p_Pop, (func(*_inst_Heap__p, *Heap__11) *item__10)(nil)).(func(*_inst_Heap__p, *Heap__11) *item__10)(&_inst_Heap__11, h)
 }
 
 func (h *Heap__11) Fix(i int) {
-	(func(*_inst_Heap__p, *Heap__11, int))(unsafe.Pointer(Heap__p_Fix))(&_inst_Heap__11, h, i)
+	generic.AsType(Heap__p_Fix, (func(*_inst_Heap__p, *Heap__11, int))(nil)).(func(*_inst_Heap__p, *Heap__11, int))(&_inst_Heap__11, h, i)
 }
 
 func (h *Heap__11) Remove(i int) int {
-	return (func(*_inst_Heap__p, *Heap__11, int) int)(unsafe.Pointer(Heap__p_Remove))(&_inst_Heap__11, h, i)
+	return generic.AsType(Heap__p_Remove, (func(*_inst_Heap__p, *Heap__11, int) int)(nil)).(func(*_inst_Heap__p, *Heap__11, int) int)(&_inst_Heap__11, h, i)
 }
 
 func (h *Heap__11) down(i0, n int) bool {
-	return (func(_inst *_inst_Heap__p, h *Heap__11, i0, n int) bool)(unsafe.Pointer(Heap__p_down))(&_inst_Heap__11, h, i0, n)
+	return generic.AsType(Heap__p_down, (func(_inst *_inst_Heap__p, h *Heap__11, i0, n int) bool)(nil)).(func(_inst *_inst_Heap__p, h *Heap__11, i0, n int) bool)(&_inst_Heap__11, h, i0, n)
 }
 
 type _inst_Heap__p struct{}

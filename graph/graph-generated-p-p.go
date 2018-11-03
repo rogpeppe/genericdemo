@@ -1,26 +1,31 @@
 package graph
 
 import (
-	"unsafe"
+	"github.com/rogpeppe/genericdemo/generic"
 )
 
+// To change code back to unsafe type conversions:
+// gofmt -r 'generic.AsType(y, (x)(nil)).(x) -> (x)(unsafe.Pointer(y))'
+
 var _inst_ShortestPath__10 = _inst_ShortestPath__p_p{
-	_func_NewHeap: (func([]*item__p_p, func(*item__p_p, *item__p_p) bool, func(**item__p_p, int)) *Heap__p)(unsafe.Pointer(NewHeap__11)),
-	_operator_Node_equal: (func(_generic_p, _generic_p) bool)(unsafe.Pointer(func(n1, n2 *TestNode) bool {
+	_func_NewHeap: generic.AsType(NewHeap__11, (func([]*item__p_p, func(*item__p_p, *item__p_p) bool, func(**item__p_p, int)) *Heap__p)(nil)).(func([]*item__p_p, func(*item__p_p, *item__p_p) bool, func(**item__p_p, int)) *Heap__p),
+	_operator_Node_equal: generic.AsType(func(n1, n2 *TestNode) bool {
 		return n1 == n2
-	})),
-	_method_Node__Edges: (func(_generic_p) []_generic_p)(unsafe.Pointer((*TestNode).Edges)),
-	_method_Edge__Nodes: (func(_generic_p) (_generic_p, _generic_p))(unsafe.Pointer((*TestEdge).Nodes)),
-	_interface_Node: (func(_generic_p) interface{})(unsafe.Pointer(func(n *TestNode) interface{} {
+	}, (func(_generic_p, _generic_p) bool)(nil)).(func(_generic_p, _generic_p) bool),
+
+	_method_Node__Edges: generic.AsType((*TestNode).Edges, (func(_generic_p) []_generic_p)(nil)).(func(_generic_p) []_generic_p),
+	_method_Edge__Nodes: generic.AsType((*TestEdge).Nodes, (func(_generic_p) (_generic_p, _generic_p))(nil)).(func(_generic_p) (_generic_p, _generic_p)),
+	_interface_Node: generic.AsType(func(n *TestNode) interface{} {
 		return n
-	})),
-	_method_Heap__Pop:  (func(*Heap__p) *item__p_p)(unsafe.Pointer((*Heap__11).Pop)),
-	_method_Heap__Fix:  (func(*Heap__p, int))(unsafe.Pointer((*Heap__11).Fix)),
-	_method_Heap__Push: (func(*Heap__p, *item__p_p))(unsafe.Pointer((*Heap__11).Push)),
+	}, (func(_generic_p) interface{})(nil)).(func(_generic_p) interface{}),
+
+	_method_Heap__Pop:  generic.AsType((*Heap__11).Pop, (func(*Heap__p) *item__p_p)(nil)).(func(*Heap__p) *item__p_p),
+	_method_Heap__Fix:  generic.AsType((*Heap__11).Fix, (func(*Heap__p, int))(nil)).(func(*Heap__p, int)),
+	_method_Heap__Push: generic.AsType((*Heap__11).Push, (func(*Heap__p, *item__p_p))(nil)).(func(*Heap__p, *item__p_p)),
 }
 
 func ShortestPath__10(from, to *TestNode) []*TestEdge {
-	return (func(_inst *_inst_ShortestPath__p_p, from, to *TestNode) []*TestEdge)(unsafe.Pointer(ShortestPath__p_p))(&_inst_ShortestPath__10, from, to)
+	return generic.AsType(ShortestPath__p_p, (func(_inst *_inst_ShortestPath__p_p, from, to *TestNode) []*TestEdge)(nil)).(func(_inst *_inst_ShortestPath__p_p, from, to *TestNode) []*TestEdge)(&_inst_ShortestPath__10, from, to)
 }
 
 type _inst_ShortestPath__p_p struct {

@@ -1,13 +1,13 @@
 package graph
 
-import "unsafe"
+import "github.com/rogpeppe/genericdemo/generic"
 
 var _inst_NewHeap__3 = _inst_NewHeap__v8a8{
-	_method_Heap__down: (func(*Heap__v8a8, int, int) bool)(unsafe.Pointer((*Heap__3).down)),
+	_method_Heap__down: generic.AsType((*Heap__3).down, (func(*Heap__v8a8, int, int) bool)(nil)).(func(*Heap__v8a8, int, int) bool),
 }
 
 func NewHeap__3(items []int, less func(int, int) bool, setIndex func(*int, int)) *Heap__3 {
-	return (func(_inst *_inst_NewHeap__v8a8, items []int, less func(int, int) bool, setIndex func(*int, int)) *Heap__3)(unsafe.Pointer(NewHeap__v8a8))(&_inst_NewHeap__3, items, less, setIndex)
+	return generic.AsType(NewHeap__v8a8, (func(_inst *_inst_NewHeap__v8a8, items []int, less func(int, int) bool, setIndex func(*int, int)) *Heap__3)(nil)).(func(_inst *_inst_NewHeap__v8a8, items []int, less func(int, int) bool, setIndex func(*int, int)) *Heap__3)(&_inst_NewHeap__3, items, less, setIndex)
 }
 
 type _inst_NewHeap__v8a8 struct {
@@ -36,23 +36,23 @@ type Heap__3 struct {
 }
 
 func (h *Heap__3) Push(x int) {
-	(func(*_inst_Heap__v8a8, *Heap__3, int))(unsafe.Pointer(Heap__v8a8_Push))(&_inst_Heap__3, h, x)
+	generic.AsType(Heap__v8a8_Push, (func(*_inst_Heap__v8a8, *Heap__3, int))(nil)).(func(*_inst_Heap__v8a8, *Heap__3, int))(&_inst_Heap__3, h, x)
 }
 
 func (h *Heap__3) Pop() int {
-	return (func(*_inst_Heap__v8a8, *Heap__3) int)(unsafe.Pointer(Heap__v8a8_Pop))(&_inst_Heap__3, h)
+	return generic.AsType(Heap__v8a8_Pop, (func(*_inst_Heap__v8a8, *Heap__3) int)(nil)).(func(*_inst_Heap__v8a8, *Heap__3) int)(&_inst_Heap__3, h)
 }
 
 func (h *Heap__3) Fix(i int) {
-	(func(*_inst_Heap__v8a8, *Heap__3, int))(unsafe.Pointer(Heap__v8a8_Fix))(&_inst_Heap__3, h, i)
+	generic.AsType(Heap__v8a8_Fix, (func(*_inst_Heap__v8a8, *Heap__3, int))(nil)).(func(*_inst_Heap__v8a8, *Heap__3, int))(&_inst_Heap__3, h, i)
 }
 
 func (h *Heap__3) Remove(i int) int {
-	return (func(*_inst_Heap__v8a8, *Heap__3, int) int)(unsafe.Pointer(Heap__v8a8_Remove))(&_inst_Heap__3, h, i)
+	return generic.AsType(Heap__v8a8_Remove, (func(*_inst_Heap__v8a8, *Heap__3, int) int)(nil)).(func(*_inst_Heap__v8a8, *Heap__3, int) int)(&_inst_Heap__3, h, i)
 }
 
 func (h *Heap__3) down(i0, n int) bool {
-	return (func(_inst *_inst_Heap__v8a8, h *Heap__3, i0, n int) bool)(unsafe.Pointer(Heap__v8a8_down))(&_inst_Heap__3, h, i0, n)
+	return generic.AsType(Heap__v8a8_down, (func(_inst *_inst_Heap__v8a8, h *Heap__3, i0, n int) bool)(nil)).(func(_inst *_inst_Heap__v8a8, h *Heap__3, i0, n int) bool)(&_inst_Heap__3, h, i0, n)
 }
 
 type _inst_Heap__v8a8 struct{}
