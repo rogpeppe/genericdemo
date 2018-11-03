@@ -1,7 +1,6 @@
 package graph
 
 import (
-	"log"
 	"unsafe"
 )
 
@@ -26,7 +25,6 @@ var _inst_NewHeap__11 = _inst_NewHeap__p{
 }
 
 func NewHeap__11(items []*item__10, less func(*item__10, *item__10) bool, setIndex func(**item__10, int)) *Heap__11 {
-	log.Printf("here!")
 	return (func(_inst *_inst_NewHeap__p, items []*item__10, less func(*item__10, *item__10) bool, setIndex func(**item__10, int)) *Heap__11)(unsafe.Pointer(NewHeap__p))(&_inst_NewHeap__11, items, less, setIndex)
 }
 

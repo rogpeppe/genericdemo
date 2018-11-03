@@ -5,15 +5,18 @@ import (
 )
 
 var _inst_ShortestPath__10 = _inst_ShortestPath__p_p{
-	_func_NewHeap:       (func([]*item__p_p, func(*item__p_p, *item__p_p) bool, func(**item__p_p, int)) *Heap__p)(unsafe.Pointer(NewHeap__11)),
+	_func_NewHeap: (func([]*item__p_p, func(*item__p_p, *item__p_p) bool, func(**item__p_p, int)) *Heap__p)(unsafe.Pointer(NewHeap__11)),
+	_operator_Node_equal: (func(_generic_p, _generic_p) bool)(unsafe.Pointer(func(n1, n2 *TestNode) bool {
+		return n1 == n2
+	})),
 	_method_Node__Edges: (func(_generic_p) []_generic_p)(unsafe.Pointer((*TestNode).Edges)),
 	_method_Edge__Nodes: (func(_generic_p) (_generic_p, _generic_p))(unsafe.Pointer((*TestEdge).Nodes)),
 	_interface_Node: (func(_generic_p) interface{})(unsafe.Pointer(func(n *TestNode) interface{} {
 		return n
 	})),
-	_method__Heap__Pop:  (func(*Heap__p) *item__p_p)(unsafe.Pointer((*Heap__11).Pop)),
-	_method__Heap__Fix:  (func(*Heap__p, int))(unsafe.Pointer((*Heap__11).Fix)),
-	_method__Heap__Push: (func(*Heap__p, *item__p_p))(unsafe.Pointer((*Heap__11).Push)),
+	_method_Heap__Pop:  (func(*Heap__p) *item__p_p)(unsafe.Pointer((*Heap__11).Pop)),
+	_method_Heap__Fix:  (func(*Heap__p, int))(unsafe.Pointer((*Heap__11).Fix)),
+	_method_Heap__Push: (func(*Heap__p, *item__p_p))(unsafe.Pointer((*Heap__11).Push)),
 }
 
 func ShortestPath__10(from, to *TestNode) []*TestEdge {
@@ -21,13 +24,14 @@ func ShortestPath__10(from, to *TestNode) []*TestEdge {
 }
 
 type _inst_ShortestPath__p_p struct {
-	_func_NewHeap       func([]*item__p_p, func(*item__p_p, *item__p_p) bool, func(**item__p_p, int)) *Heap__p
-	_method__Heap__Pop  func(*Heap__p) *item__p_p
-	_method__Heap__Fix  func(*Heap__p, int)
-	_method__Heap__Push func(*Heap__p, *item__p_p)
-	_method_Node__Edges func(_generic_p) []_generic_p
-	_method_Edge__Nodes func(_generic_p) (_generic_p, _generic_p)
-	_interface_Node     func(_generic_p) interface{}
+	_func_NewHeap        func([]*item__p_p, func(*item__p_p, *item__p_p) bool, func(**item__p_p, int)) *Heap__p
+	_operator_Node_equal func(_generic_p, _generic_p) bool
+	_method_Heap__Pop    func(*Heap__p) *item__p_p
+	_method_Heap__Fix    func(*Heap__p, int)
+	_method_Heap__Push   func(*Heap__p, *item__p_p)
+	_method_Node__Edges  func(_generic_p) []_generic_p
+	_method_Edge__Nodes  func(_generic_p) (_generic_p, _generic_p)
+	_interface_Node      func(_generic_p) interface{}
 }
 
 func ShortestPath__p_p(_inst *_inst_ShortestPath__p_p, from, to _generic_p) []_generic_p {
@@ -47,8 +51,8 @@ func ShortestPath__p_p(_inst *_inst_ShortestPath__p_p, from, to _generic_p) []_g
 	nodes := make(map[interface{}]*item)
 	var found *item
 	for len(h.Items) > 0 {
-		nearest := _inst._method__Heap__Pop(h)
-		if nearest.n == to {
+		nearest := _inst._method_Heap__Pop(h)
+		if _inst._operator_Node_equal(nearest.n, to) {
 			found = nearest
 			break
 		}
@@ -66,11 +70,11 @@ func ShortestPath__p_p(_inst *_inst_ShortestPath__p_p, from, to _generic_p) []_g
 					edge: e,
 				}
 				nodes[_inst._interface_Node(edgeTo)] = it
-				_inst._method__Heap__Push(h, it)
+				_inst._method_Heap__Push(h, it)
 			} else if dist < toItem.dist {
 				toItem.dist = dist
 				toItem.edge = e
-				_inst._method__Heap__Fix(h, toItem.index)
+				_inst._method_Heap__Fix(h, toItem.index)
 			}
 		}
 	}

@@ -8,7 +8,7 @@ type indexedInt struct {
 }
 
 type TestNode struct {
-	name  string
+	index int
 	edges []*TestEdge
 }
 
