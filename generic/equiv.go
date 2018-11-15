@@ -5,7 +5,100 @@ import (
 	"reflect"
 	"strings"
 	"unsafe"
+	"go/types"
 )
+
+var typesChanDir = []types.ChanDir{
+	reflect.RecvDir: types.RecvOnly,
+	reflect.SendDir: types.SendOnly,
+	reflect.BothDir: types.SendRecv,
+}
+
+var typesBasic = []types.BasicKind{
+	reflect.Bool:          types.Bool,
+	reflect.Int:           types.Int,
+	reflect.Int8:          types.Int8,
+	reflect.Int16:         types.Int16,
+	reflect.Int32:         types.Int32,
+	reflect.Int64:         types.Int64,
+	reflect.Uint:          types.Uint,
+	reflect.Uint8:         types.Uint8,
+	reflect.Uint16:        types.Uint16,
+	reflect.Uint32:        types.Uint32,
+	reflect.Uint64:        types.Uint64,
+	reflect.Uintptr:       types.Uintptr,
+	reflect.Float32:       types.Float32,
+	reflect.Float64:       types.Float64,
+	reflect.Complex64:     types.Complex64,
+	reflect.Complex128:    types.Complex128,
+	reflect.UnsafePointer: types.UnsafePointer,
+	reflect.String:        types.String,
+}
+
+func typesType(t reflect.Type) types.Type {
+	var tt types.Type
+	switch t.Kind() {
+	case reflect.Slice:
+		tt = types.NewSlice(typesType(t.Elem()))
+	case reflect.Array:
+		tt = types.NewArray(typesType(t.Elem()), int64(t.Len()))
+	case reflect.Ptr:
+		tt = types.NewPointer(typesType(t.Elem()))
+	case reflect.Chan:
+		tt = types.NewChan(typesChanDir[t.ChanDir()], typesType(t.Elem()))
+	case reflect.Map:
+		tt = types.NewMap(typesType(t.Key()), typesType(t.Elem()))
+	case reflect.Func:
+		inVars := make([]*types.Var, t.NumIn())
+		for i := 0; i < t.NumIn(); i++ {
+			// TODO do we need a valid *Package arg?
+			inVars[i] = types.NewParam(0, nil, "", typesType(t.In(i)))
+		}
+		params := types.NewTuple(inVars...)
+		outVars := make([]*types.Var, t.NumOut())
+		for i := 0; i < t.NumOut(); i++ {
+			outVars[i] = types.NewParam(0, nil, "", typesType(t.Out(i)))
+		}
+		results := types.NewTuple(outVars...)
+		// TODO do we need a valid receiver?
+		tt = types.NewSignature(nil, params, results, t.IsVariadic())
+	case reflect.Interface:
+		methods := make([]*types.Func, t.NumMethod())
+		for i := 0; i < t.NumMethod(); i++ {
+			m := t.Method(i)
+			methods[i] = types.NewFunc(0, nil, m.Name, typesType(m.Type).(*types.Signature))
+		}
+		tti := types.NewInterfaceType(methods, nil)
+		tti.Complete()
+		tt = tti
+		
+	case reflect.Struct:
+		fields := make([]*types.Var, t.NumField())
+		tags := make([]string, t.NumField())
+		for i := 0; i < t.NumField(); i++ {
+			field := t.Field(i)
+			fields[i] = types.NewField(0, types.NewPackage(field.PkgPath, "p"), field.Name, typesType(field.Type), field.Anonymous)
+			tags[i] = string(field.Tag)
+		}
+		tt = types.NewStruct(fields, tags)
+	default:
+		tt = types.Typ[typesBasic[t.Kind()]]
+	}
+	if t.Name() == "" || t.PkgPath() == "" {
+		return tt
+	}
+	var methods []*types.Func
+	if t.Kind() != reflect.Interface {
+		// Collect methods
+		methods = make([]*types.Func, t.NumMethod())
+		for i := 0; i < t.NumMethod(); i++ {
+			m := t.Method(i)
+			methods[i] = types.NewFunc(0, nil, m.Name, typesType(m.Type).(*types.Signature))
+		}
+	}
+	pkg := types.NewPackage(t.PkgPath(), "p")
+	return types.NewNamed(types.NewTypeName(0, pkg, t.Name(), nil), tt, methods)
+}
 
 func isGenericType(t reflect.Type) bool {
 	return strings.HasPrefix(t.Name(), "_generic_")

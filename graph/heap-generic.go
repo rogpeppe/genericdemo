@@ -2,7 +2,9 @@
 
 package graph
 
-func NewHeap(E)(items []E, less func(E, E) bool, setIndex func(e *E, i int)) *Heap(E) {
+contract _() {}
+
+func NewHeap(type E)(items []E, less func(E, E) bool, setIndex func(e *E, i int)) *Heap(E) {
 	h := &Heap(E){
 		Items: items,
 		less: less,
@@ -25,7 +27,7 @@ func (h *Heap(E)) Push(x E) {
 	// Push and Pop use pointer receivers because they modify the slice's length,
 	// not just its contents.
 	h.Items = append(h.Items, x)
-	h.up(len(h.Items)-1
+	h.up(len(h.Items)-1)
 }
 
 func (h *Heap(E)) Pop() E {

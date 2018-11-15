@@ -3,6 +3,8 @@ package generic
 import (
 	"reflect"
 	"testing"
+	"fmt"
+	"go/types"
 
 	qt "github.com/frankban/quicktest"
 )
@@ -40,6 +42,10 @@ var typeMapTests = []struct {
 	about:  "value array",
 	t:      new([3]byte),
 	expect: "v3a1",
+}, {
+	about: "short int",
+	t: new([4]int16),
+	expect: "v8a2",
 }}
 
 func TestTypeMap(t *testing.T) {
@@ -52,6 +58,39 @@ func TestTypeMap(t *testing.T) {
 		c.Run(test.about, func(c *qt.C) {
 			typ := reflect.TypeOf(test.t).Elem()
 			c.Assert(typeMapOf(typ).typeName(), qt.Equals, test.expect)
+		})
+	}
+}
+
+var typesTypeTests = []struct{
+	t interface{}
+	want string
+}{{
+	t: new(int),
+	want: "int",
+}, {
+	t: new(struct{
+		a int
+		b int
+		c []byte
+	}),
+	want: "struct{a int; b int; c []uint8}",
+}, {
+	t: new(interface{
+		A(string, []bool) (int, string)
+		B()
+	}),
+	want: "interface{A(string, []bool) (int, string); B()}",
+}}
+
+func TestTypesType(t *testing.T) {
+	for _, test := range typesTypeTests {
+		t.Run(fmt.Sprintf("%T", test.t), func(t *testing.T) {
+			typ := typesType(reflect.TypeOf(test.t).Elem())
+			got := types.TypeString(typ, nil)
+			if got != test.want {
+				t.Fatalf("bad type; got %s want %s", got, test.want)
+			}
 		})
 	}
 }
