@@ -21,8 +21,6 @@ var typeIds = map[generic.TypeTuple]int{generic.Types(new(Int)): 2,
 	generic.Types(new(*TestEdge)):                 9,
 	generic.Types(new(*TestNode), new(*TestEdge)): 10,
 	generic.Types(new(*item__10)):                 11,
-	generic.Types(new(_p_NewHeap__t0)):            16,
-	generic.Types(new(Heap__16)):                  17,
 }
 
 func expand(t reflect.Type) string {
