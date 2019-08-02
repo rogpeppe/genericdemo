@@ -2,10 +2,10 @@ package generic
 
 import (
 	"fmt"
+	"go/types"
 	"reflect"
 	"strings"
 	"unsafe"
-	"go/types"
 )
 
 var typesChanDir = []types.ChanDir{
@@ -71,7 +71,7 @@ func typesType(t reflect.Type) types.Type {
 		tti := types.NewInterfaceType(methods, nil)
 		tti.Complete()
 		tt = tti
-		
+
 	case reflect.Struct:
 		fields := make([]*types.Var, t.NumField())
 		tags := make([]string, t.NumField())
@@ -263,10 +263,15 @@ func (m *typeMap) addPtr(offset uintptr) {
 	m.ptrs = append(m.ptrs, true)
 }
 
+// typeName returns a string representing m as a pointer map.
+// A pointer is represented as the letter "p"; a run of N bytes is represented as "vN";
+// the alignment constraint of N bytes is represented as the suffix "aN"
+// (this is omitted when the type contains any pointers, as the alignment is
+// always the pointer size in this case)
 func (m *typeMap) typeName() string {
 	if len(m.ptrs) == 0 {
 		if m.fieldAlign != m.align {
-			panic("when does this happen?")
+			panic("when does this happen? can it ever happen?")
 		}
 		return fmt.Sprintf("v%da%d", m.size, m.align)
 	}

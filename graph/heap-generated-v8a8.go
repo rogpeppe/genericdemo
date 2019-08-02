@@ -2,12 +2,25 @@ package graph
 
 import "github.com/rogpeppe/genericdemo/generic"
 
+// _inst_NewHeap__3 holds the type-instance variables required for the
+// NewHeap(int) function.
 var _inst_NewHeap__3 = _inst_NewHeap__v8a8{
 	_method_Heap__down: generic.AsType((*Heap__3).down, (func(*Heap__v8a8, int, int) bool)(nil)).(func(*Heap__v8a8, int, int) bool),
 }
 
+// NewHeap__3 is the instantiation of NewHeap(int).
 func NewHeap__3(items []int, less func(int, int) bool, setIndex func(*int, int)) *Heap__3 {
-	return generic.AsType(NewHeap__v8a8, (func(_inst *_inst_NewHeap__v8a8, items []int, less func(int, int) bool, setIndex func(*int, int)) *Heap__3)(nil)).(func(_inst *_inst_NewHeap__v8a8, items []int, less func(int, int) bool, setIndex func(*int, int)) *Heap__3)(&_inst_NewHeap__3, items, less, setIndex)
+	// Call the generic version of the function, passing it the type-instance variables that
+	// allows it to access the types-specific operations.
+	return generic.AsType(
+		NewHeap__v8a8,
+		(func(_inst *_inst_NewHeap__v8a8, items []int, less func(int, int) bool, setIndex func(*int, int)) *Heap__3)(nil),
+	).(func(_inst *_inst_NewHeap__v8a8, items []int, less func(int, int) bool, setIndex func(*int, int)) *Heap__3)(
+		&_inst_NewHeap__3,
+		items,
+		less,
+		setIndex,
+	)
 }
 
 type _inst_NewHeap__v8a8 struct {
