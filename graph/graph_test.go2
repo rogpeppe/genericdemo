@@ -1,0 +1,112 @@
+package graph
+
+import (
+	"fmt"
+	"reflect"
+	"testing"
+)
+
+type graphTest struct {
+	arcs     [][2]int
+	from, to int
+	want     [][2]int
+}
+
+var graphTests = []graphTest{{
+	arcs: [][2]int{
+		{0, 1},
+		{2, 0},
+		{2, 4},
+		{2, 5},
+		{2, 3},
+		{1, 5},
+		{2, 5},
+	},
+	from: 0,
+	to:   5,
+	want: [][2]int{
+		{1, 5},
+		{0, 1},
+	},
+}, {
+	arcs: [][2]int{
+		{0, 1},
+		{0, 2},
+		{0, 3},
+		{2, 3},
+		{3, 4},
+		{4, 2},
+		{4, 5},
+		{7, 0},
+	},
+	from: 7,
+	to:   5,
+	want: [][2]int{
+		{4, 5},
+		{3, 4},
+		{0, 3},
+		{7, 0},
+	},
+}}
+
+func TestShortestPath(t *testing.T) {
+	for i, test := range graphTests {
+		t.Run(fmt.Sprint("test", i), func(t *testing.T) {
+			testShortestPath(t, test)
+		})
+	}
+}
+
+func testShortestPath(t *testing.T, test graphTest) {
+	nodes := make(map[int]*TestNode)
+	for _, a := range test.arcs {
+		nodes[a[0]] = &TestNode{
+			index: a[0],
+		}
+		nodes[a[1]] = &TestNode{
+			index: a[1],
+		}
+	}
+	for _, a := range test.arcs {
+		from, to := nodes[a[0]], nodes[a[1]]
+		edge := &TestEdge{
+			from: from,
+			to:   to,
+		}
+		from.edges = append(from.edges, edge)
+		to.edges = append(to.edges, edge)
+	}
+	// Note: the results are in reverse order.
+	path := ShortestPath[*TestNode, *TestEdge](nodes[test.from], nodes[test.to])
+	var got [][2]int
+	for _, e := range path {
+		got = append(got, [2]int{e.from.index, e.to.index})
+	}
+	if !reflect.DeepEqual(got, test.want) {
+		t.Fatalf("unexpected result; got %#v want %#v", got, test.want)
+	}
+}
+
+type Int int
+
+type indexedInt struct {
+	x int
+	i int
+}
+
+type TestNode struct {
+	index int
+	edges []*TestEdge
+}
+
+func (n *TestNode) Edges() []*TestEdge {
+	return n.edges
+}
+
+type TestEdge struct {
+	from, to *TestNode
+}
+
+func (n *TestEdge) Nodes() (from, to *TestNode) {
+	return n.from, n.to
+}

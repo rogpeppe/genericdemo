@@ -1,11 +1,12 @@
-// +build ignore
-
 package graph
 
-contract Graph(n Node, e Edge) {
-	var _ []Edge = n.Edges()
-	var from, to Node = e.Nodes()
-	map[Node]bool{}
+type GraphNode[type Edge] interface {
+	Edges() []Edge
+	comparable
+}
+
+type GraphEdge[type Node] interface {
+	Nodes() (Node, Node)
 }
 
 // item holds an item in the node fringe being calculated by
@@ -13,29 +14,29 @@ contract Graph(n Node, e Edge) {
 // itself, but that would mean we couldn't refer to it globally in the
 // generated code (not a problem when doing generics directly in the
 // compiler)
-type item(type Node, Edge) struct {
+type item[Node, Edge any] struct {
 	n Node
 	dist int
 	index int
 	edge Edge
 }
 
-func ShortestPath(type Node, Edge Graph)(from, to Node) []Edge {
-	type item = item(Node, Edge)
-	h := NewHeap([]*item(Node, Edge){{
+func ShortestPath[Node GraphNode[Edge], Edge GraphEdge[Node]](from, to Node) []Edge {
+	type itemNE = item[Node, Edge]
+	h := NewHeap([]*itemNE{{
 		n: from,
 		dist: 0,
 		index: 0,
-	}}, func(i1, i2 *item) bool {
+	}}, func(i1, i2 *itemNE) bool {
 		return i1.dist < i2.dist
-	}, func(it **item, i int) {
+	}, func(it **itemNE, i int) {
 		(*it).index = i
 	})
 	// Note: we'd like to use map[Node] *item but we
 	// can't do that since we can't provide the equality and
 	// hash functions to the internal map implementation.
-	nodes := make(map[interface{}] *item)
-	var found *item
+	nodes := make(map[Node] *itemNE)
+	var found *itemNE
 	for len(h.Items) > 0 {
 		nearest := h.Pop()
 		if nearest.n == to {
@@ -50,11 +51,13 @@ func ShortestPath(type Node, Edge Graph)(from, to Node) []Edge {
 			dist := nearest.dist + 1		// Could use e.Length() instead of 1.
 			toItem, ok := nodes[edgeTo]
 			if !ok {
-				nodes[edgeTo] = &item{
-					n: edgeTo,
+				it := &itemNE{
+					n:    edgeTo,
 					dist: dist,
 					edge: e,
 				}
+				nodes[edgeTo] = it
+				h.Push(it)
 			} else if dist < toItem.dist {
 				toItem.dist = dist
 				toItem.edge = e
@@ -62,10 +65,13 @@ func ShortestPath(type Node, Edge Graph)(from, to Node) []Edge {
 			}
 		}
 	}
+	if found == nil {
+		return nil
+	}
 	var edges []Edge
 	for {
 		edges = append(edges, found.edge)
-		edgeFrom, edgeTo := found.edge.Nodes()
+		edgeFrom, _ := found.edge.Nodes()
 		if edgeFrom == from {
 			break
 		}

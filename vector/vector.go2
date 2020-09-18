@@ -1,0 +1,87 @@
+package main
+import "fmt"
+
+func main() {
+	fmt.Println(addPair[Int](34, 56))
+	fmt.Println(addPair[Str]("a", "b"))
+	fmt.Println(addPair(Flag{2}, Flag{3}))
+	x := sum(sum(sum(Vec[Vec[Vec[Int]]]{
+		{
+			{1,2,3,4},
+			{3,4},
+		},
+		{
+			{2,3},
+			{},
+			{4,5,7,787},
+		},
+	})))
+	fmt.Println(x)
+}
+
+type Adder[T any] interface {
+	Add(T) T
+}
+
+func addPair[T Adder[T]](a, b T) T {
+	return sum([]T{a, b})
+}
+
+func sum[T Adder[T]](ts []T) (x T) {
+	if len(ts) == 0 {
+		return
+	}
+	x = ts[0]
+	for _, t := range ts[1:] {
+		x = x.Add(t)
+	}
+	return x
+}
+
+type Vec[T Adder[T]] []T
+
+func (v1 Vec[T]) Add(v2 Vec[T]) Vec[T] {
+	if len(v2) > len(v1) {
+		v1, v2 = v2, v1
+	}
+	r := make(Vec[T], len(v1))
+	for i := range v2 {
+		r[i] = v1[i].Add(v2[i])
+	}
+	for i, x := range v1[len(v2):] {
+		r[i+len(v2)] = x
+	}
+	return r
+}
+
+type Int int
+
+func (i Int) Add(j Int) Int {
+	return i + j
+}
+
+type Str string
+
+func (s Str) Add(t Str) Str {
+	return s + t
+}
+
+type Flag struct {
+	Mask int
+}
+
+func (f Flag) Add(g Flag) Flag {
+	return Flag{f.Mask | g.Mask}
+}
+
+type AdderI interface {
+	Add(j AdderI) AdderI
+}
+
+type StrAdderI struct {
+	Str
+}
+
+func (a StrAdderI) Add(b AdderI) AdderI {
+	return StrAdderI{a.Str.Add(b.(StrAdderI).Str)}
+}

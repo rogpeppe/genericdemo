@@ -1,0 +1,17 @@
+package main
+
+import (
+	"testing"
+)
+
+func TestSanity(t *testing.T) {
+	if got, want := addPair(Int(34), Int(67)), Int(34+67); got != want {
+		t.Fatalf("unexpected result; got %v want %v", got, want)
+	}
+	if got, want := addPair(Flag{1}, Flag{3}), (Flag{3 | 1}); got != want {
+		t.Fatalf("unexpected result; got %v want %v", got, want)
+	}
+	if got, want := addPair(Str("hello "), Str("world")), Str("hello world"); got != want {
+		t.Fatalf("unexpected result; got %v want %v", got, want)
+	}
+}

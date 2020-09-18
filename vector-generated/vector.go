@@ -346,6 +346,8 @@ func _copyVal(v reflect.Value) reflect.Value {
 type Vec__0 []Int
 
 var _inst_Vec__0 = _inst_Vec__v8{
+	// Note: this type conversion (and others below) rely on a patch to the compiler
+	// that allows unsafe type conversion between function values and pointers.
 	add: (func(_generic_v8, _generic_v8) _generic_v8)(unsafe.Pointer(Int.Add)),
 }
 
@@ -376,7 +378,7 @@ func (v1 Vec__5) Add(v2 Vec__5) Vec__5 {
 type Vec__v8 []_generic_v8
 
 type _inst_Vec__v8 struct {
-	add  func(_generic_v8, _generic_v8) _generic_v8
+	add func(_generic_v8, _generic_v8) _generic_v8
 }
 
 func Vec__v8_Add(_inst *_inst_Vec__v8, v1 Vec__v8, v2 Vec__v8) Vec__v8 {
@@ -412,4 +414,36 @@ func Vec__pv16_Add(inst *_inst_Vec__pv16, v1 Vec__pv16, v2 Vec__pv16) Vec__pv16 
 		r[i+len(v2)] = x
 	}
 	return r
+}
+
+type Int int
+
+func (i Int) Add(j Int) Int {
+	return i + j
+}
+
+type Str string
+
+func (s Str) Add(t Str) Str {
+	return s + t
+}
+
+type Flag struct {
+	Mask int
+}
+
+func (f Flag) Add(g Flag) Flag {
+	return Flag{f.Mask | g.Mask}
+}
+
+type AdderI interface {
+	Add(j AdderI) AdderI
+}
+
+type StrAdderI struct {
+	Str
+}
+
+func (a StrAdderI) Add(b AdderI) AdderI {
+	return StrAdderI{a.Str.Add(b.(StrAdderI).Str)}
 }

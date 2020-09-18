@@ -1,14 +1,17 @@
-// +build ignore
-
 package graph
 
-func newIntHeap(items []int) *Heap(int) {
-	return NewHeap(int)(items, func(a, b int) bool {
+import (
+	"testing"
+	"math/rand"
+)
+
+func newIntHeap(items []int) *Heap[int] {
+	return NewHeap(items, func(a, b int) bool {
 		return a < b
 	}, nil)
 }
 
-func verifyHeap(t *testing.T, h *Heap(int), i int) {
+func verifyHeap(t *testing.T, h *Heap[int], i int) {
 	t.Helper()
 	n := len(h.Items)
 	j1 := 2*i + 1
